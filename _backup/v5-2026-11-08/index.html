@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en" data-page="home">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Easy Comfort: foam mattresses and pillows, in every standard size or made to yours</title>
+<meta name="description" content="Eight Easy Comfort foam mattresses, from the 4″ Hybrid Eco to the 12″ Camellia Euro Top, and pillows. Watch the bed being made in 3D, unveil every layer, then find a dealer near you. All standard sizes and tailor-made sizes, up to 10 years guarantee on the foam core.">
+<meta name="theme-color" content="#131b37">
+<meta name="color-scheme" content="dark light">
+<script>
+/* Before anything paints: the saved theme, and always start at the top (the loading screen makes the bed there) */
+(function (d) {
+  d.classList.add('js');
+  var t; try { t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('ec-theme'); } catch (e) {}
+  d.setAttribute('data-theme', t === 'morning' ? 'morning' : 'night');
+  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#f4f3ef'); }
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+  var n = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
+  if (location.hash && n.type && n.type !== 'navigate') history.replaceState(null, '', location.pathname + location.search);
+  if (location.hash) d.classList.add('deep'); else { d.classList.add('is-loading'); window.__ldSafe = setTimeout(function () { d.classList.remove('is-loading'); }, 12000); }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Loading screen: the 3D bed is made under it, layer by layer, then swings into the hero (script.js, bed3d.js) -->
+<div class="loader" id="loader" aria-hidden="true">
+  <p class="ld-mark"><span class="brand-mark"><i></i><i></i><i></i></span>Easy Comfort</p>
+  <div class="ld-ui">
+    <p class="ld-word">Making the bed</p>
+    <p class="ld-count"><span id="ldNum">0</span><small>%</small></p>
+    <div class="ld-bar"><i></i></div>
+  </div>
+</div>
+<a class="skip" href="#range">Skip to the mattresses</a>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Easy Comfort, home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Easy Comfort</span></a>
+  <nav class="nav-links" id="navLinks" aria-label="Main">
+    <span class="nav-pill" aria-hidden="true"></span>
+    <a href="#showroom" data-nav="showroom">3D Showroom</a>
+    <a href="#range" data-nav="range">Mattresses</a>
+    <a href="services.html" data-nav="services">Services</a>
+    <a href="faq.html" data-nav="faq">FAQ</a>
+    <a href="stores.html" data-nav="stores">Stores</a>
+    <a class="btn nav-cta-m" href="#range">Find your mattress</a>
+  </nav>
+  <div class="nav-end">
+    <button class="theme" id="themeBtn" type="button" role="switch" aria-checked="false" title="Switch to morning"><span class="sr-only">Morning light</span><span class="theme-knob" aria-hidden="true"></span></button>
+    <a class="btn nav-cta" href="#range">Find your mattress</a>
+    <button class="nav-menu" id="navMenu" type="button" aria-expanded="false" aria-controls="navLinks"><span class="sr-only">Menu</span><i aria-hidden="true"></i></button>
+  </div>
+</header>
+
+<main>
+  <!-- First section: one pinned stage and one 3D bedroom. The headline and the captions are painted on its wall.
+       Scrolling: bed right with the words on the left, bed in the middle and open with words above,
+       bed on the left with words on the right, then the stage turns into the showroom. -->
+  <section class="story" id="top" aria-labelledby="heroTitle">
+    <span class="anchor" id="inside"></span>
+    <span class="anchor" id="showroom"></span>
+    <div class="stage" id="stage">
+      <canvas class="bed-canvas" id="bed" role="img"
+        aria-label="A 3D bedroom with an Easy Comfort mattress on an oak bed. Scrolling lifts the cover and spreads out the layers inside."></canvas>
+      <img class="bed-fallback" id="bedFallback" src="images/prime-aura.webp" width="688" height="308" alt="" hidden>
+
+      <header class="hero-copy" id="heroCopy">
+        <div class="wall-copy">
+          <p class="eyebrow">Easy Comfort mattresses</p>
+          <h1 id="heroTitle">Rest easy.</h1>
+          <p class="hero-lead">Eight foam mattresses, from the 4″ Hybrid Eco to the 12″ Camellia Euro Top. Every one in all standard sizes, or tailor-made to yours.</p>
+        </div>
+        <div class="hero-ctas" id="heroCtas">
+          <a class="btn" href="#range">Find your mattress</a>
+          <a class="btn btn--glass down" href="#inside">See what is inside</a>
+        </div>
+        <ul class="hero-facts wall-copy" id="heroFacts">
+          <li><b>8</b>foam mattresses</li>
+          <li><b>4–12″</b>thick</li>
+          <li><b>10 yr</b>guarantee, at most</li>
+        </ul>
+      </header>
+      <p class="cue" aria-hidden="true">Scroll</p>
+
+      <!-- The captions. With 3D on they are painted on the wall at three stops; these are for screen readers and for no 3D -->
+      <div class="caps">
+        <div class="cap" data-cap=".14,.19,.3,.34" data-wall="cap1">
+          <h2>The cover lifts off</h2>
+          <p>Knitted jacquard ticking made in Italy and Belgium, Tencel spun from eucalyptus, or a polyester cover you can remove.</p>
+        </div>
+        <div class="cap" data-cap=".37,.42,.53,.57" data-wall="cap2">
+          <h2>Every layer has a density</h2>
+          <p>Comfort foams from 22 to 35&nbsp;kg/m³, memory foam in the Camellias, and rebond at 80&nbsp;kg/m³ in the core.</p>
+        </div>
+        <div class="cap" data-cap=".6,.65,.74,.78" data-wall="cap3">
+          <h2>Made to your size</h2>
+          <p>All standard sizes, or tailor-made. Up to 10 years guarantee on the foam core against manufacturing defects and sagging.</p>
+        </div>
+      </div>
+
+      <header class="showroom-head">
+        <p class="eyebrow">3D showroom</p>
+        <h2>Every mattress, up close</h2>
+        <p>Pick one, turn it, press it, and unveil the layers inside.</p>
+      </header>
+
+      <form class="hero-ui" id="heroUi">
+        <fieldset class="wing wing--l picker glass" id="picker">
+          <legend>Choose a mattress</legend>
+          <div class="picker-keys" id="pickerKeys"></div>
+        </fieldset>
+
+        <section class="wing wing--r showcase glass" id="showcase" aria-label="The mattress on the bed">
+          <p class="badge" id="scBadge" hidden>Signature</p>
+          <h2 id="scName"></h2>
+          <p class="sc-line" id="scLine"></p>
+          <ul class="facts" id="scFacts"></ul>
+          <p class="price" id="scPrice"></p>
+          <fieldset class="sc-opt" id="scThickSet"><legend>Thickness</legend><div class="opt-keys" id="scThick"></div></fieldset>
+          <fieldset class="sc-opt" id="scColourSet" hidden><legend>Colour</legend><div class="opt-keys" id="scColour"></div></fieldset>
+          <div class="sc-layers" id="scLayersWrap">
+            <p class="sc-layers-title">Inside, top to bottom</p>
+            <ul class="layers" id="scLayers"></ul>
+            <p class="sc-note">Layer order from the product sheet. Thicknesses drawn to illustrate.</p>
+          </div>
+          <div class="sc-actions">
+            <button class="peel" id="unveil" type="button" aria-pressed="false">Unveil</button>
+            <button class="ghost" id="scDetails" type="button" aria-haspopup="dialog">Details</button>
+          </div>
+        </section>
+      </form>
+      <p class="hint" id="hint">Drag to turn the bed. Press the mattress to feel how firm it is.</p>
+      <div class="thread" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- The range, as a bento. Each card holds the full write-up from the product sheet; the details window reads it from here -->
+  <section class="range" id="range" aria-labelledby="rangeTitle">
+    <header class="sec-head">
+      <h2 id="rangeTitle" data-split>The range</h2>
+      <p data-rv="60">Eight mattresses and our pillows. Every mattress comes in all standard sizes, or tailor-made to yours.</p>
+    </header>
+
+    <fieldset class="filter" id="filter" data-rv="120">
+      <legend class="sr-only">Show by feel</legend>
+      <label class="key"><input type="radio" name="feel" value="All" checked><span class="key-top"><b>All</b><small>9</small></span></label>
+      <label class="key"><input type="radio" name="feel" value="Soft"><span class="key-top"><b>Soft</b><small>2</small></span></label>
+      <label class="key"><input type="radio" name="feel" value="Medium"><span class="key-top"><b>Medium</b><small>2</small></span></label>
+      <label class="key"><input type="radio" name="feel" value="Hard"><span class="key-top"><b>Hard</b><small>4</small></span></label>
+      <label class="key"><input type="radio" name="feel" value="Pillows"><span class="key-top"><b>Pillows</b><small>3 sizes</small></span></label>
+    </fieldset>
+    <p class="sr-only" id="filterCount" aria-live="polite"></p>
+
+    <div class="grid" id="grid" data-rv-kids="3" data-rv-step="110">
+
+      <article class="card card--wide" id="camellia-euro-top" data-feel="Soft" data-model="camellia-euro-top" data-thick="8″|10″|12″">
+        <figure class="card-photo"><img src="images/camellia-euro-top.webp" width="676" height="193" loading="lazy" alt="Easy Comfort Camellia Euro Top mattress in a white Tencel cover"></figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:0">Soft</li><li>8–12″</li><li>10-year guarantee</li></ul>
+          <h3>Camellia Euro Top</h3>
+          <p class="card-line">A surface that closes around you.</p>
+          <div class="card-foot">
+            <p class="price"><small>From </small>Rs. 18,900</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Camellia Euro Top in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Camellia Euro Top</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Camellia Memory Foam Euro Top</dd></div>
+          <div><dt>Feeling</dt><dd>Soft, with a memory foam feel. The comfort level can be adjusted to your requirement.</dd></div>
+          <div><dt>Foam core</dt><dd>8″ and 10″: 6 layers. 12″: 8 layers.<br>A rebond layer of 80&nbsp;kg/m³ density, a memory foam layer of 35&nbsp;kg/m³ density, and other foam layers of 25 and 30&nbsp;kg/m³ density, to enhance the back support as well as the comfort level.</dd></div>
+          <div><dt>Fabric cover</dt><dd>Wrapped in a luxurious, Belgium made Tencel fabric, made from eucalyptus yarns at 300 GSM, which adds an extra layer of comfort.</dd></div>
+          <div><dt>Thicknesses</dt><dd>8″, 10″ and 12″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 10-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <article class="card" id="camellia-pillow-top" data-feel="Soft" data-model="camellia-pillow-top" data-thick="8″|10″">
+        <figure class="card-photo"><img src="images/camellia-pillow-top.webp" width="555" height="207" loading="lazy" alt="Easy Comfort Camellia Pillow Top mattress in white, with a quilted pillow top"></figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:0">Soft</li><li>8–10″</li><li>10-year guarantee</li></ul>
+          <h3>Camellia Pillow Top</h3>
+          <p class="card-line">A second surface, laid on the first.</p>
+          <div class="card-foot">
+            <p class="price"><small>From </small>Rs. 40,600</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Camellia Pillow Top in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Camellia Pillow Top</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Camellia Memory Foam Pillow Top</dd></div>
+          <div><dt>Feeling</dt><dd>Soft. Tailor-made to your requirement.</dd></div>
+          <div><dt>Foam core</dt><dd>7 different foam layers: a rebond layer of 80&nbsp;kg/m³ density, a memory foam layer of 35&nbsp;kg/m³ density, and other foam layers of 25 and 30&nbsp;kg/m³ density, to enhance:
+            <ul><li>Durability</li><li>Body pressure distribution</li><li>Air flow</li><li>Comfort when you turn over</li></ul></dd></div>
+          <div><dt>Fabric cover</dt><dd>Wrapped in a luxurious, Belgium made, higher GSM, knitted jacquard mattress ticking, which enhances the comfort and air flow.</dd></div>
+          <div><dt>Thicknesses</dt><dd>8″ and 10″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 10-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <article class="card card--feature" id="prime-aura" data-feel="Medium" data-model="prime-aura" data-thick="7″" data-badge="Signature">
+        <figure class="card-photo"><img src="images/prime-aura.webp" width="688" height="308" loading="lazy" alt="Easy Comfort Prime Aura mattress in a white jacquard cover with grey flowers"><p class="badge">Signature</p></figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:.5">Medium</li><li>7″</li><li>10-year guarantee</li></ul>
+          <h3>Prime Aura</h3>
+          <p class="card-line">Three zones. One straight spine.</p>
+          <div class="card-foot">
+            <p class="price price--tbc">Pricing to be confirmed</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Prime Aura in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Prime Aura</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Prime Aura</dd></div>
+          <div><dt>Feeling</dt><dd>Medium</dd></div>
+          <div><dt>Foam core</dt><dd>Layers of 22, 25 and 30&nbsp;kg/m³ density. A specially developed 3-zone structure withstands body pressure and weight, to promote proper spinal alignment.</dd></div>
+          <div><dt>Fabric cover</dt><dd>Wrapped in a luxurious, breathable, Belgium made, knitted jacquard mattress ticking, which adds an extra layer of comfort and enhances the air flow.</dd></div>
+          <div><dt>Thickness</dt><dd>7″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 10-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <article class="card" id="emma-french-top" data-feel="Medium" data-model="emma-french-top" data-thick="6″|8″">
+        <figure class="card-photo"><img src="images/emma-french-top.webp" width="896" height="297" loading="lazy" alt="Easy Comfort Emma French Top mattress in a pale green cover with grey palm leaves"></figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:.5">Medium</li><li>6–8″</li><li>10-year guarantee</li></ul>
+          <h3>Emma French Top</h3>
+          <p class="card-line">Soft on top. Sure underneath.</p>
+          <div class="card-foot">
+            <p class="price"><small>From </small>Rs. 25,500</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Emma French Top in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Emma French Top</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Emma French Top</dd></div>
+          <div><dt>Feeling</dt><dd>Medium</dd></div>
+          <div><dt>Foam core</dt><dd>An ultra-soft, breathable, special PU foam layer (26 density) as the top layer, which greatly stimulates air circulation.</dd></div>
+          <div><dt>Fabric cover</dt><dd>Wrapped in a luxurious, Belgium made, higher GSM, knitted jacquard mattress ticking, which enhances the comfort and air flow.</dd></div>
+          <div><dt>Thicknesses</dt><dd>6″ and 8″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 10-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <article class="card" id="imperio" data-feel="Hard" data-model="imperio" data-thick="6″|8″|10″" data-colours="White|Blue">
+        <figure class="card-photo">
+          <img class="is-shown" src="images/imperio-white.webp" width="584" height="183" loading="lazy" data-colour="White" alt="Easy Comfort Imperio mattress in white, with a grey geometric border">
+          <img src="images/imperio-blue.webp" width="590" height="167" loading="lazy" data-colour="Blue" alt="Easy Comfort Imperio mattress in blue, with a geometric pattern">
+          <div class="colour-toggle" role="group" aria-label="Imperio cover colour">
+            <button type="button" aria-pressed="true" data-colour="White"><i style="--c:#f2f1ec"></i>White</button>
+            <button type="button" aria-pressed="false" data-colour="Blue"><i style="--c:#1f3170"></i>Blue</button>
+          </div>
+        </figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:1">Hard</li><li>6–10″</li><li>10-year guarantee</li></ul>
+          <h3>Imperio</h3>
+          <p class="card-line">Firm, on purpose.</p>
+          <div class="card-foot">
+            <p class="price"><small>From </small>Rs. 18,900</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Imperio in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Imperio</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Imperio</dd></div>
+          <div><dt>Feeling</dt><dd>Hard</dd></div>
+          <div><dt>Foam core</dt><dd>6″ and 8″: 5 layers. 10″: 7 layers.<br>A specially designed 25&nbsp;kg/m³ density profile layer on top for back support and air flow. The other foam layers are 25&nbsp;kg/m³ density, with a rebond layer of 80&nbsp;kg/m³ density.</dd></div>
+          <div><dt>Fabric cover</dt><dd>The top fabric is a luxurious, breathable knitted jacquard made with Italian technology, which adds an extra layer of comfort and enhances the air flow. It lifts the moderately hard feel of the profile foam layer on top of the core.</dd></div>
+          <div><dt>Colours</dt><dd>White and Blue</dd></div>
+          <div><dt>Thicknesses</dt><dd>6″, 8″ and 10″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 10-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <article class="card" id="hybrid-plush" data-feel="Hard" data-model="hybrid-plush" data-thick="4.5″">
+        <figure class="card-photo"><img src="images/hybrid-plush.webp" width="482" height="140" loading="lazy" alt="Easy Comfort Hybrid Plush mattress in a blue jacquard cover with a leaf pattern"></figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:.85">Firm-leaning plush</li><li>4.5″</li><li>7-year guarantee</li></ul>
+          <h3>Hybrid Plush</h3>
+          <p class="card-line">Plush to touch. Honest underneath.</p>
+          <div class="card-foot">
+            <p class="price">Rs. 23,000</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Hybrid Plush in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Hybrid Plush</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Hybrid Plush</dd></div>
+          <div><dt>Feeling</dt><dd>Hard</dd></div>
+          <div><dt>Foam core</dt><dd>3 layers:
+            <ul><li>Profile cut foam layer on top</li><li>Rebond layer of 80&nbsp;kg/m³ density in the middle of the core</li><li>High density foam layer at the bottom</li></ul>
+            Specially designed to enhance the air flow, comfort and body pressure distribution.</dd></div>
+          <div><dt>Fabric cover</dt><dd>Wrapped in a luxurious, Italian made, knitted jacquard mattress ticking, which adds an extra layer of comfort and enhances the air flow.</dd></div>
+          <div><dt>Thickness</dt><dd>4.5″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 7-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <article class="card" id="hybrid-eco" data-feel="Hard" data-model="hybrid-eco" data-thick="4″">
+        <figure class="card-photo"><img src="images/hybrid-eco.webp" width="785" height="178" loading="lazy" alt="Easy Comfort Hybrid Eco mattress in a blue patterned cover"></figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:1">Hard</li><li>4″</li><li>5-year guarantee</li></ul>
+          <h3>Hybrid Eco</h3>
+          <p class="card-line">Everything a good night needs.</p>
+          <div class="card-foot">
+            <p class="price">Rs. 18,000</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Hybrid Eco in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Hybrid Eco</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Hybrid Eco</dd></div>
+          <div><dt>Feeling</dt><dd>Hard</dd></div>
+          <div><dt>Foam core</dt><dd>2 layers</dd></div>
+          <div><dt>Fabric cover</dt><dd>Removable polyester fabric</dd></div>
+          <div><dt>Thickness</dt><dd>4″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 5-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <article class="card card--wide" id="vento" data-feel="Hard" data-model="vento" data-thick="5″">
+        <figure class="card-photo"><img src="images/vento.webp" width="1000" height="459" loading="lazy" alt="Easy Comfort Vento mattress in a tropical print cover with toucans and flowers"></figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:1">Hard</li><li>5″</li><li>5-year guarantee</li></ul>
+          <h3>Vento</h3>
+          <p class="card-line">Four layers. No fuss.</p>
+          <div class="card-foot">
+            <p class="price price--tbc">Pricing to be confirmed</p>
+            <div class="card-actions">
+              <button type="button" class="unveil-btn" data-unveil>Unveil<span class="sr-only"> the Vento in 3D</span></button>
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the Vento</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Vento</dd></div>
+          <div><dt>Feeling</dt><dd>Hard</dd></div>
+          <div><dt>Foam core</dt><dd>4-layer structure: 3 foam layers of 22–25&nbsp;kg/m³ density and a rebond layer of 80&nbsp;kg/m³ density.</dd></div>
+          <div><dt>Fabric cover</dt><dd>Removable polyester fabric cover</dd></div>
+          <div><dt>Thickness</dt><dd>5″</dd></div>
+          <div><dt>Sizes</dt><dd>All standard sizes, and tailor-made sizes</dd></div>
+          <div><dt>Guarantee</dt><dd>Rest easy with a 5-year guarantee on the foam core against manufacturing defects and sagging</dd></div>
+        </dl>
+      </article>
+
+      <!-- The product sheet has no photo of the pillows yet, so this card draws one -->
+      <article class="card card--stat" id="pillows" data-feel="Pillows" data-sizes="King, 30″ × 20″|Queen, 18″ × 27″|Standard, 16″ × 24″">
+        <figure class="card-photo card-photo--drawn" aria-hidden="true">
+          <svg viewBox="0 0 320 180" width="320" height="180"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e1da"/></linearGradient></defs>
+            <path d="M44 58c-6-18 4-30 22-30 40 8 148 8 188 0 18 0 28 12 22 30-6 18-6 46 0 64 6 18-4 30-22 30-40-8-148-8-188 0-18 0-28-12-22-30 6-18 6-46 0-64z" fill="url(#pg)" stroke="#b9b6ad" stroke-width="2"/>
+            <path d="M60 46c40 6 160 6 200 0M60 134c40-6 160-6 200 0" fill="none" stroke="#cfccc3" stroke-width="1.5" stroke-dasharray="5 4"/></svg>
+          <p class="card-stat">3<small>sizes</small></p>
+        </figure>
+        <div class="card-body">
+          <ul class="facts"><li class="feel" style="--lvl:.3">Medium soft</li><li>King, Queen, Standard</li></ul>
+          <h3>Easy Comfort Pillows</h3>
+          <p class="card-line">Fibre and foam chips, under a Turkish jacquard.</p>
+          <div class="card-foot">
+            <p class="price price--tbc">Pricing to be confirmed</p>
+            <div class="card-actions">
+              <button type="button" class="card-open" aria-haspopup="dialog">Details<span class="sr-only"> of the pillows</span></button>
+            </div>
+          </div>
+        </div>
+        <dl class="spec">
+          <div><dt>Type</dt><dd>Pillows</dd></div>
+          <div><dt>Feeling</dt><dd>Medium soft</dd></div>
+          <div><dt>Core</dt><dd>Specially processed polyester fibre, mixed with foam chips to enhance the comfort</dd></div>
+          <div><dt>Fabric cover</dt><dd>Wrapped in a luxurious, Turkey made, higher GSM, knitted jacquard mattress ticking, which enhances the comfort and air flow.</dd></div>
+          <div><dt>Sizes</dt><dd>30″ × 20″ (King), 18″ × 27″ (Queen) and 16″ × 24″ (Standard)</dd></div>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <!-- 11:40 pm: a sleeper settles into the mattress on the bed above, in 3D (bed3d.js), or drawn in SVG without 3D.
+       It runs while it is on screen; Pause stops it -->
+  <section class="night" id="night" aria-labelledby="nightLine">
+    <div class="night-copy">
+      <p class="night-time" data-rv><time id="nightClock" datetime="23:40"><span id="nightH">11</span><span class="colon">:</span><span id="nightM">40</span><small>pm</small></time></p>
+      <h2 class="night-line" id="nightLine" data-split>The body begins to let go. <span class="l2">The mattress begins to take it.</span></h2>
+      <button class="night-pause" id="nightPause" type="button" data-rv="140"><i aria-hidden="true"></i><span>Pause</span></button>
+    </div>
+    <figure class="night-scene" id="nightScene" data-rv="80">
+      <div class="night-stage">
+        <svg id="nightSvg" viewBox="0 0 1000 560" role="img" aria-label="A sleeper under a duvet sinks slowly into the layers of the mattress, which give under the shoulders and hips"></svg>
+        <canvas class="night-canvas" id="nightCanvas" aria-hidden="true"></canvas>
+        <div class="callouts" aria-hidden="true">
+          <p class="callout" data-k="shoulders"><i></i><em></em><span><b></b><small></small></span></p>
+          <p class="callout" data-k="hips"><i></i><em></em><span><b></b><small></small></span></p>
+          <p class="callout callout--low" data-k="core"><i></i><em></em><span><b></b><small></small></span></p>
+        </div>
+      </div>
+      <figcaption class="night-model" id="nightModel"></figcaption>
+    </figure>
+  </section>
+
+  <!-- A sky, and three numbers on glass -->
+  <section class="why" id="why" aria-labelledby="whyTitle">
+    <div class="why-panel" data-rv>
+      <div class="why-sky" aria-hidden="true"></div>
+      <p class="pill-label" data-rv="350">Why Easy Comfort</p>
+      <h2 id="whyTitle" data-split>Made to last. Made to measure.</h2>
+      <p class="why-sub" data-rv="120">Dense foams, a guarantee on the foam core, and every size: standard, or tailor-made to yours.</p>
+      <ul class="why-cards" data-rv-kids="3" data-rv-step="160">
+        <li class="why-card">
+          <span class="why-ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 4 40 10v13c0 10-7 18-16 21C15 41 8 33 8 23V10z"/><path d="m17 24 5 5 9-10"/></svg></span>
+          <p class="why-num"><span data-count="10">10</span><small>yr</small></p>
+          <p>Guarantee on the foam core, at most</p>
+        </li>
+        <li class="why-card">
+          <span class="why-ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M6 14h36v6H6zM6 22h36v6H6zM6 30h36v8H6z"/><path d="M11 33h3M18 35h2M25 32h3M32 34h2"/></svg></span>
+          <p class="why-num"><span data-count="80">80</span><small>kg/m³</small></p>
+          <p>Rebond at the core of five mattresses</p>
+        </li>
+        <li class="why-card">
+          <span class="why-ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 44s14-13 14-24a14 14 0 1 0-28 0c0 11 14 24 14 24z"/><circle cx="24" cy="20" r="5"/></svg></span>
+          <p class="why-num"><span data-count="7">7</span></p>
+          <p>Dealers across Sri Lanka</p>
+        </li>
+      </ul>
+      <p class="why-credit">Skies: <a href="https://commons.wikimedia.org/wiki/File:Moon_in_clouds_over_Koller%C3%B6d.jpg">W.carter, CC0</a> · <a href="https://commons.wikimedia.org/wiki/File:Above_the_clouds_Annapurna_Conservation_Area.jpg">Sudeepacharya076, CC BY-SA 4.0</a></p>
+    </div>
+  </section>
+
+  <section class="explore" aria-labelledby="exploreTitle">
+    <header class="sec-head">
+      <h2 id="exploreTitle" data-split>Before you buy</h2>
+      <p data-rv="60">How we make your size, the questions people ask, and the dealer nearest you.</p>
+    </header>
+    <ul class="explore-grid" data-rv-kids="3" data-rv-step="120">
+      <li><a class="go" href="services.html"><span class="go-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></svg></span><small>Sizes, comfort, guarantee</small><b>Services</b></a></li>
+      <li><a class="go" href="faq.html"><span class="go-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4.2"/><path d="M12 17.6h.01"/></svg></span><small>Feel, densities, covers</small><b>Questions</b></a></li>
+      <li><a class="go" href="stores.html"><span class="go-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21.5s7.5-6.6 7.5-12a7.5 7.5 0 1 0-15 0c0 5.4 7.5 12 7.5 12z"/><circle cx="12" cy="9.5" r="2.6"/></svg></span><small>Seven dealers, Jaffna to Galle</small><b>Where to buy</b></a></li>
+    </ul>
+  </section>
+</main>
+
+<!-- Details window: filled from the card you open -->
+<dialog class="detail" id="detail" aria-labelledby="dName">
+  <div class="detail-in">
+    <button class="detail-x" id="dClose" type="button" aria-label="Close"></button>
+    <div class="detail-photo" id="dPhoto"></div>
+    <div class="detail-text">
+      <p class="badge" id="dBadge" hidden>Signature</p>
+      <h2 id="dName"></h2>
+      <p class="sc-line" id="dLine"></p>
+      <ul class="facts" id="dFacts"></ul>
+      <p class="price" id="dPrice"></p>
+      <dl class="spec" id="dSpec"></dl>
+
+      <form class="ask" id="ask">
+        <h3>Ask us about this one</h3>
+        <fieldset id="fColour"><legend>Colour</legend><div class="opt-keys" id="kColour"></div></fieldset>
+        <fieldset id="fThick"><legend>Thickness</legend><div class="opt-keys" id="kThick"></div></fieldset>
+        <fieldset id="fSize"><legend>Size</legend><div class="opt-keys" id="kSize"></div>
+          <div class="custom" id="custom" hidden>
+            <label>Width, inches<input id="cw" inputmode="decimal" autocomplete="off"></label>
+            <label>Length, inches<input id="cl" inputmode="decimal" autocomplete="off"></label>
+          </div>
+        </fieldset>
+        <div class="ask-actions">
+          <a class="btn" id="dMail" href="#">Email us about this</a>
+          <button class="btn btn--ghost" id="dUnveil" type="button">Unveil in 3D</button>
+        </div>
+        <p class="ask-note">No payment yet. We reply to confirm the price and a delivery date.</p>
+      </form>
+    </div>
+    <div class="detail-nav">
+      <button type="button" id="dPrev"></button>
+      <button type="button" id="dNext"></button>
+    </div>
+  </div>
+</dialog>
+
+<footer class="foot" id="foot">
+  <canvas id="quilt" aria-hidden="true"></canvas>
+  <div class="foot-in">
+    <div class="label label--brand" data-rv>
+      <p class="label-line">Easy Comfort</p>
+      <p class="label-tag">Sri Lanka's Rising Sleep Brand</p>
+      <nav aria-label="Footer">
+        <a href="#showroom">3D showroom</a>
+        <a href="#range">The range</a>
+        <a href="services.html">Services</a>
+        <a href="faq.html">Questions</a>
+        <a href="stores.html">Where to buy</a>
+      </nav>
+      <p class="label-small">© 2026 Easy Comfort</p>
+    </div>
+
+    <div class="tag-wrap">
+      <button class="tag" id="tag" type="button">You may remove this tag.</button>
+      <p class="tag-after" id="tagAfter" aria-live="polite"></p>
+    </div>
+
+    <div class="label label--contact" data-rv="120">
+      <div class="label-block">
+        <h2 class="label-h">Get in touch</h2>
+        <a href="mailto:info@easycomfortsleepsolutions.com">info@easycomfortsleepsolutions.com</a>
+        <a href="tel:+94112489634">+94 11 248 9634</a>
+      </div>
+      <div class="label-block">
+        <h2 class="label-h">Visit</h2>
+        <address>No. 306/16, Hospital Road,<br>Biyagama, Sri Lanka</address>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="site.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

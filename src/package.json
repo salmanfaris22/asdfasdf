@@ -1,0 +1,12 @@
+{
+  "name": "easy-comfort-bed3d",
+  "private": true,
+  "description": "Source for ../bed3d.js. Run npm install, then npm run build. Delete node_modules before uploading the site.",
+  "scripts": {
+    "build": "esbuild bed3d.js --bundle --minify --format=iife --target=es2020 --outfile=../bed3d.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "three": "0.187.0"
+  }
+}

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twain: one bed, two mattresses, each built for its sleeper</title>
+<meta name="description" content="Twain is a split mattress. Pick a firmness for your side and a different one for theirs, and sleep on one bed with no gap down the middle.">
+<meta name="theme-color" content="#18213f">
+<link rel="preload" as="image" href="frames/f000.webp">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#choose">Skip to choosing your sides</a>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top">Twain</a>
+  <nav aria-label="Main">
+    <a href="#inside">Inside</a>
+    <a href="#prices">Prices</a>
+    <a href="#questions">Questions</a>
+    <a class="nav-cta" href="#choose">Choose your sides</a>
+  </nav>
+</header>
+
+<main id="top">
+  <!-- Scroll track: the tall box that gives the pinned stage its scroll distance -->
+  <section class="track" id="track" aria-label="What is inside the mattress">
+    <span class="anchor" id="inside"></span>
+    <div class="stage" id="stage">
+      <div class="frame" id="frame">
+        <canvas id="canvas" width="1280" height="720" role="img"
+          aria-label="A split mattress on an oak bed lifts apart into its layers of foam and springs, then closes again."></canvas>
+        <h1 class="seam-title" id="title" aria-label="Yours and theirs: a split mattress">
+          <span class="yours" aria-hidden="true">Yours</span>
+          <span class="theirs" aria-hidden="true">Theirs</span>
+        </h1>
+        <div class="spot" id="spot"></div>
+      </div>
+      <div class="night" id="night"></div>
+      <div class="thread" id="thread"></div>
+
+      <div class="caps" id="caps">
+        <div class="cap cap--day" data-cap="0,0,.055,.09">
+          <p class="lead">One bed. Two mattresses, each built for the person lying on it.</p>
+          <p class="cue">Scroll to open it up</p>
+        </div>
+        <div class="cap cap--day" data-cap=".145,.17,.235,.26">
+          <h2>The covers come off first</h2>
+          <p>Each side has its own cover, so you can take off one without disturbing the other.</p>
+        </div>
+        <div class="cap" data-cap=".3,.32,.365,.385">
+          <h2>You share the top</h2>
+          <p>A quilted pad, micro springs and a latex sheet run across the whole bed.</p>
+        </div>
+        <div class="cap" data-cap=".385,.405,.45,.47">
+          <h2>Your side is firmer and cooler</h2>
+          <p>Cotton batting, two support foams and a latex band keep you on top of the bed.</p>
+        </div>
+        <div class="cap cap--right" data-cap=".47,.49,.535,.555">
+          <h2>Their side is softer and closer</h2>
+          <p>Contour foam, pin-core latex and a charcoal layer let shoulders and hips sink in.</p>
+        </div>
+        <div class="cap" data-cap=".555,.575,.645,.665">
+          <h2>The springs work alone</h2>
+          <p>Each pocket spring moves by itself, so one of you can roll over while the other stays asleep.</p>
+        </div>
+        <div class="cap cap--day" data-cap=".83,.855,.925,.95">
+          <h2>It closes into one bed</h2>
+          <p>A quilted bridge lies over the centre seam, so nobody sleeps in a gap.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="choose" id="choose">
+    <header class="choose-head">
+      <h2>Now choose each side</h2>
+      <p id="hint">Drag to turn the bed. Press the mattress to feel each side.</p>
+    </header>
+
+    <canvas class="bed-canvas" id="bed" role="img"
+      aria-label="A 3D oak bed with two mattress halves. Choosing a feel opens that half and shows its layers."></canvas>
+    <img class="bed-fallback" id="bedFallback" src="frames/f105.webp" alt="The mattress opened into its layers" hidden>
+
+    <form class="builder" id="builder">
+      <fieldset class="wing wing--l" data-tilt="1">
+        <legend>Your side</legend>
+        <label class="key key--firm"><input type="radio" name="left" value="Firm" checked><span class="key-top"><b>Firm</b><small>For back and front sleepers</small></span></label>
+        <label class="key key--medium"><input type="radio" name="left" value="Medium"><span class="key-top"><b>Medium</b><small>For people who move around</small></span></label>
+        <label class="key key--soft"><input type="radio" name="left" value="Soft"><span class="key-top"><b>Soft</b><small>For side sleepers</small></span></label>
+        <ul class="layers" id="layersLeft" aria-label="Layers in your side"></ul>
+      </fieldset>
+
+      <fieldset class="wing wing--r" data-tilt="-1">
+        <legend>Their side</legend>
+        <label class="key key--firm"><input type="radio" name="right" value="Firm"><span class="key-top"><b>Firm</b><small>For back and front sleepers</small></span></label>
+        <label class="key key--medium"><input type="radio" name="right" value="Medium"><span class="key-top"><b>Medium</b><small>For people who move around</small></span></label>
+        <label class="key key--soft"><input type="radio" name="right" value="Soft" checked><span class="key-top"><b>Soft</b><small>For side sleepers</small></span></label>
+        <ul class="layers" id="layersRight" aria-label="Layers in their side"></ul>
+      </fieldset>
+
+      <div class="dock">
+        <fieldset class="sizes">
+          <legend class="sr-only">Bed size</legend>
+          <label class="key key--size"><input type="radio" name="size" value="Queen" data-w="60" checked><span class="key-top"><i class="mini" style="--w:60"></i><b>Queen</b><small>60 × 78 in</small></span></label>
+          <label class="key key--size"><input type="radio" name="size" value="King" data-w="72"><span class="key-top"><i class="mini" style="--w:72"></i><b>King</b><small>72 × 78 in</small></span></label>
+          <label class="key key--size"><input type="radio" name="size" value="Super king" data-w="78"><span class="key-top"><i class="mini" style="--w:78"></i><b>Super king</b><small>78 × 78 in</small></span></label>
+        </fieldset>
+        <button class="peel" id="peel" type="button" aria-pressed="false">Open the layers</button>
+      </div>
+
+      <p class="live"><span id="summary" aria-live="polite"></span> <a href="#prices">See the price list</a></p>
+    </form>
+  </section>
+
+  <section class="prices" id="prices">
+    <header class="prices-head">
+      <h2>Price list</h2>
+      <p>Each side has its own price, because each side has its own layers. Add your two sides together.</p>
+    </header>
+
+    <div class="prices-grid">
+      <div class="prices-main">
+        <!-- PLACEHOLDER prices. Every total on the page is worked out from these data-price values. -->
+        <table class="ptable" id="ptable">
+          <caption class="sr-only">Price of one side of the bed, by bed size and feel</caption>
+          <thead>
+            <tr><th scope="col">Bed size</th><th scope="col">Firm side</th><th scope="col">Medium side</th><th scope="col">Soft side</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="Queen">
+              <th scope="row"><button type="button">Queen<small>60 × 78 in</small></button></th>
+              <td data-feel="Firm" data-price="21000">₹21,000</td><td data-feel="Medium" data-price="23000">₹23,000</td><td data-feel="Soft" data-price="25000">₹25,000</td>
+            </tr>
+            <tr data-size="King">
+              <th scope="row"><button type="button">King<small>72 × 78 in</small></button></th>
+              <td data-feel="Firm" data-price="25000">₹25,000</td><td data-feel="Medium" data-price="27000">₹27,000</td><td data-feel="Soft" data-price="29000">₹29,000</td>
+            </tr>
+            <tr data-size="Super king">
+              <th scope="row"><button type="button">Super king<small>78 × 78 in</small></button></th>
+              <td data-feel="Firm" data-price="29000">₹29,000</td><td data-feel="Medium" data-price="31000">₹31,000</td><td data-feel="Soft" data-price="33000">₹33,000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="extras">
+          <div>
+            <h3>Add to your bed</h3>
+            <ul class="addons" id="addons">
+              <li><label><input type="checkbox" data-name="Oak bed frame" data-price="28000"><span>Oak bed frame<small>The one in the film</small></span><b>₹28,000</b></label></li>
+              <li><label><input type="checkbox" data-name="Two pillows" data-price="3600"><span>Two pillows<small>One for each side</small></span><b>₹3,600</b></label></li>
+              <li><label><input type="checkbox" data-name="Waterproof protectors" data-price="3200"><span>Waterproof protectors<small>A pair, one for each half</small></span><b>₹3,200</b></label></li>
+              <li><label><input type="checkbox" data-name="Old mattress removal" data-price="1500"><span>Old mattress removal<small>We take it when we deliver</small></span><b>₹1,500</b></label></li>
+            </ul>
+          </div>
+          <div>
+            <h3>In every bed</h3>
+            <ul class="included">
+              <li>Quilted centre bridge</li>
+              <li>Two zip-off, washable covers</li>
+              <li>Delivery and setup</li>
+              <li>100 nights to swap a side</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <aside class="receipt" id="receipt" aria-label="Your bed and total">
+        <div class="receipt-in">
+          <h3>Your bed</h3>
+          <p class="receipt-size" id="receiptSize"></p>
+          <table class="lines"><tbody id="lines"></tbody></table>
+          <p class="total"><span>Total</span><strong id="total" aria-live="polite"></strong></p>
+          <!-- PLACEHOLDER: replace hello@example.com in script.js with the real order address -->
+          <a class="btn" id="order" href="#">Email us this bed</a>
+          <p class="receipt-note">No payment yet. We reply to confirm the order and delivery date.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="questions" id="questions">
+    <header class="q-head">
+      <h2>Questions couples ask</h2>
+      <p>Pull out a layer to read the answer.</p>
+      <p class="q-more">Something else? <a href="mailto:hello@example.com">Email us</a></p>
+    </header>
+
+    <div class="stack" id="stack">
+      <div class="stack-3d" id="stack3d">
+        <div class="slab slab--quilt">
+          <h3><button type="button" aria-expanded="false" aria-controls="a1">Will we feel a gap in the middle?<i></i></button></h3>
+          <div class="slab-a" id="a1"><div><p>No. The quilted bridge lies over the seam from head to foot, so you can roll across the bed without finding an edge.</p></div></div>
+        </div>
+        <div class="slab slab--latex">
+          <h3><button type="button" aria-expanded="false" aria-controls="a2">What if one of us picks the wrong feel?<i></i></button></h3>
+          <div class="slab-a" id="a2"><div><p>Sleep on it for 100 nights. If one side is wrong, we swap that half and leave the other where it is.</p></div></div>
+        </div>
+        <div class="slab slab--amber">
+          <h3><button type="button" aria-expanded="false" aria-controls="a3">Can the covers be washed?<i></i></button></h3>
+          <div class="slab-a" id="a3"><div><p>Yes. Each cover zips off on its own and goes in a normal machine on a cold wash.</p></div></div>
+        </div>
+        <div class="slab slab--pin">
+          <h3><button type="button" aria-expanded="false" aria-controls="a4">Will it fit the bed we already have?<i></i></button></h3>
+          <div class="slab-a" id="a4"><div><p>Queen, king and super king use standard Indian bed sizes. Measure the inside of your frame and compare it with the price list.</p></div></div>
+        </div>
+        <div class="slab slab--charcoal">
+          <h3><button type="button" aria-expanded="false" aria-controls="a5">Can we replace one side later?<i></i></button></h3>
+          <div class="slab-a" id="a5"><div><p>Yes. Each half is a separate mattress, so a new side goes in without touching the other.</p></div></div>
+        </div>
+        <div class="coils" aria-hidden="true"></div>
+        <div class="rail" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot" id="foot">
+  <canvas id="quilt" aria-hidden="true"></canvas>
+  <div class="foot-in">
+    <div class="label">
+      <p class="label-line">Goodnight, both of you.</p>
+      <div class="label-cols">
+        <nav aria-label="Footer">
+          <a href="#inside">What is inside</a>
+          <a href="#choose">Choose your sides</a>
+          <a href="#prices">Price list</a>
+          <a href="#questions">Questions</a>
+        </nav>
+        <div>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <p>Twain makes one bed from two mattresses.</p>
+        </div>
+      </div>
+      <p class="label-small">© 2026 Twain</p>
+    </div>
+
+    <div class="tag-wrap">
+      <button class="tag" id="tag" type="button">You may remove this tag.</button>
+      <p class="tag-after" id="tagAfter" aria-live="polite"></p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
