@@ -1,5 +1,5 @@
 /* Easy Comfort Sleep Solutions home page: the loading screen, the 3D showroom, the range, the details window, and 11:40 pm.
-   site.js (loaded first) owns the theme, the nav, the reveals and the footer; film.js the scroll film at the top. */
+   site.js (loaded first) owns the theme, the nav, the reveals and the footer; hero.js the film at the top. */
 (() => {
   'use strict';
 
@@ -12,7 +12,7 @@
   const DEBUG = /[?&]debug\b/.test(location.search);   // tests: let the bed be made however slow the machine
 
   /* ---------- Loading screen ----------
-     A full page while the film at the top gets its first pass of frames (enough to scrub all of it).
+     A full page while the hero film gets ready to play (hero.js).
      The count follows real steps; at 100 it lifts like a curtain. The 3D showroom loads after, out of sight. */
   const loader = $('loader');
   const ld = { val: 0, target: 6, done: false, ending: false, t0: performance.now() };
@@ -417,7 +417,7 @@
   })();
 
   /* The film's headline rises as the loading screen lifts */
-  const heroBits = ['.film-hero .eyebrow', '.film-hero .hero-lead', '.film-hero .hero-ctas', '.film-hero .hero-facts'].map((sel) => document.querySelector(sel)).filter(Boolean);
+  const heroBits = ['.vhero-text .eyebrow', '.vhero-text .hero-lead', '.vhero-text .hero-ctas', '.vhero-text .hero-facts'].map((sel) => document.querySelector(sel)).filter(Boolean);
   EC.splitWords?.($('heroTitle'));
   heroBits.forEach((e) => e.classList.add('rv'));
   whenLoaded(() => {

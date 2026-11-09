@@ -72,48 +72,66 @@
 </header>
 
 <main>
-  <!-- First section: the film. One pinned screen; scrolling plays the video frame by frame (film.js):
-       the bed is made, the bedding lifts, the layers rise apart, settle back, and the bed is made again.
-       The headline, then three captions, take turns beside it. -->
-  <section class="film" id="top" aria-labelledby="heroTitle">
-    <span class="anchor" id="inside"></span>
-    <div class="film-stage" id="filmStage">
-      <canvas class="film-canvas" id="film" role="img" aria-label="An Easy Comfort Sleep Solutions mattress on a made bed. As you scroll, the bedding lifts away, the layers inside rise apart, then settle back and the bed is made again."></canvas>
-      <img class="film-poster" id="filmPoster" src="film/hd/f000.webp" width="1600" height="900" alt="" fetchpriority="high">
-      <div class="film-shade" aria-hidden="true"></div>
-      <div class="film-copy">
-        <header class="film-block film-hero" data-film="-1,-.5,.04,.09">
-          <p class="eyebrow hero-eyebrow">Easy Comfort Sleep Solutions mattresses</p>
-          <h1 id="heroTitle"><span class="t-rest">The night,</span> <span class="t-easy">held gently.</span></h1>
-          <p class="hero-lead">Eight mattresses for the moment the day lets go. In every standard size, or made to yours.</p>
-          <div class="hero-ctas" id="heroCtas">
-            <a class="btn btn--one" href="#range">Find your mattress <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-            <a class="btn btn--two down" href="#inside"><svg class="ic ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L18.8 12z"/></svg>See what’s inside</a>
-          </div>
-          <ul class="hero-facts" id="heroFacts">
-            <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 3 10.5 16 17l13-6.5zM3 16l13 6.5L29 16M3 21.5 16 28l13-6.5"/></svg><span><b>8</b>Mattresses</span></li>
-            <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5 5 7.5v8c0 6.6 4.6 11.2 11 13 6.4-1.8 11-6.4 11-13v-8z"/><path d="m11 16 3.6 3.6 6.9-7.1"/></svg><span><b>10 yr</b>Up to, on the foam core</span></li>
-            <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg><span><b>7</b>Dealers</span></li>
-          </ul>
-        </header>
-        <article class="film-block film-cap cap" data-film=".15,.19,.29,.33">
+  <!-- First section: the hero. The film plays once behind the headline and rests on the made bed (hero.js); the three
+       chapters along the bottom follow it: the cover lifts, the layers rise apart, the bed is made again -->
+  <section class="vhero" id="top" aria-labelledby="heroTitle">
+    <video class="vhero-video" id="heroVideo" autoplay muted playsinline preload="auto" poster="images/hero-poster.webp"
+      aria-label="An Easy Comfort Sleep Solutions mattress on a made bed: the bedding lifts away, the layers inside rise apart, then settle back and the bed is made again.">
+      <source src="video/hero-720.mp4" type="video/mp4" media="(max-width: 900px)">
+      <source src="video/hero-1080.mp4" type="video/mp4">
+    </video>
+    <div class="vhero-shade" aria-hidden="true"></div>
+    <div class="vhero-in">
+      <header class="vhero-text">
+        <p class="eyebrow hero-eyebrow">Easy Comfort Sleep Solutions</p>
+        <h1 id="heroTitle"><span class="t-rest">The night,</span> <span class="t-easy">held gently.</span></h1>
+        <p class="hero-lead">Eight mattresses for the moment the day lets go. In every standard size, or made to yours.</p>
+        <div class="hero-ctas" id="heroCtas">
+          <a class="btn btn--one" href="#range">Find your mattress <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn--two down" href="#inside"><svg class="ic ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L18.8 12z"/></svg>See what’s inside</a>
+        </div>
+        <ul class="hero-facts" id="heroFacts">
+          <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 3 10.5 16 17l13-6.5zM3 16l13 6.5L29 16M3 21.5 16 28l13-6.5"/></svg><span><b>8</b>Mattresses</span></li>
+          <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5 5 7.5v8c0 6.6 4.6 11.2 11 13 6.4-1.8 11-6.4 11-13v-8z"/><path d="m11 16 3.6 3.6 6.9-7.1"/></svg><span><b>10 yr</b>Up to, on the foam core</span></li>
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg><span><b>7</b>Dealers</span></li>
+        </ul>
+      </header>
+    </div>
+    <ol class="vhero-chapters" id="heroChapters" aria-hidden="true">
+      <li data-t="1,2.9"><b>01</b>The cover<i></i></li>
+      <li data-t="2.9,6.9"><b>02</b>The core<i></i></li>
+      <li data-t="6.9,9.7"><b>03</b>The fit<i></i></li>
+    </ol>
+    <button class="vhero-pause" id="heroPause" type="button" aria-pressed="false"><i aria-hidden="true"></i><span class="sr-only">Pause the film</span></button>
+  </section>
+
+  <!-- What is inside: the three chapters of the film, in words -->
+  <section class="inside" id="inside" aria-label="What is inside">
+    <div class="inside-grid">
+      <article class="inside-card" data-rv="0">
+        <figure class="inside-photo"><img src="images/inside-cover.webp" width="1200" height="875" loading="lazy" alt="The bedding lifting away from an Easy Comfort Sleep Solutions mattress, its cover underneath"><span class="inside-num" aria-hidden="true">01</span></figure>
+        <div class="inside-body">
           <p class="eyebrow cap-eyebrow">01 · The cover</p>
           <h2>Begin with <em>softness.</em></h2>
           <p>Belgian knitted jacquard, Tencel from eucalyptus yarn, or a polyester cover that lifts away. Whichever you choose, it is the first thing the night meets.</p>
-        </article>
-        <article class="film-block film-cap cap" data-film=".43,.47,.6,.64">
+        </div>
+      </article>
+      <article class="inside-card" data-rv="110">
+        <figure class="inside-photo"><img src="images/inside-core.webp" width="1200" height="875" loading="lazy" alt="The layers of an Easy Comfort Sleep Solutions mattress risen apart, one above the other"><span class="inside-num" aria-hidden="true">02</span></figure>
+        <div class="inside-body">
           <p class="eyebrow cap-eyebrow">02 · The core</p>
           <h2>Beneath the softness, <em>a quiet discipline.</em></h2>
           <p>Every layer is chosen by its density. Comfort foams from 22 to 35&nbsp;kg/m³, memory foam in the Camellias, and rebond at 80&nbsp;kg/m³ at the core. Nothing here is accidental. It is only meant to feel that way.</p>
-        </article>
-        <article class="film-block film-cap cap" data-film=".7,.74,.88,.93">
+        </div>
+      </article>
+      <article class="inside-card" data-rv="220">
+        <figure class="inside-photo"><img src="images/inside-fit.webp" width="1200" height="875" loading="lazy" alt="The layers settling back into one mattress on the bed"><span class="inside-num" aria-hidden="true">03</span></figure>
+        <div class="inside-body">
           <p class="eyebrow cap-eyebrow">03 · The fit</p>
           <h2>Made to the measure <em>of you.</em></h2>
           <p>Every standard size, or tailor-made to yours. Up to 10 years’ guarantee on the foam core against manufacturing defects and sagging.</p>
-        </article>
-      </div>
-      <p class="film-cue" aria-hidden="true"><i></i>Scroll to look inside</p>
-      <div class="film-bar" aria-hidden="true"><i></i></div>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -178,7 +196,7 @@
 
     <div class="grid" id="grid" data-rv-kids="3" data-rv-step="110">
 
-      <article class="card card--wide" id="camellia-euro-top" data-feel="Soft" data-model="camellia-euro-top" data-thick="8″|10″|12″">
+      <article class="card" id="camellia-euro-top" data-feel="Soft" data-model="camellia-euro-top" data-thick="8″|10″|12″">
         <figure class="card-photo"><img src="images/camellia-euro-top.webp" width="676" height="193" loading="lazy" alt="Easy Comfort Sleep Solutions Camellia Euro Top mattress in a white Tencel cover"></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:0">Soft</li><li>8–12″</li><li>10-year guarantee</li></ul>
@@ -229,7 +247,7 @@
         </dl>
       </article>
 
-      <article class="card card--feature" id="prime-aura" data-feel="Medium" data-model="prime-aura" data-thick="7″" data-badge="Signature">
+      <article class="card" id="prime-aura" data-feel="Medium" data-model="prime-aura" data-thick="7″" data-badge="Signature">
         <figure class="card-photo"><img src="images/prime-aura.webp" width="688" height="308" loading="lazy" alt="Easy Comfort Sleep Solutions Prime Aura mattress in a white jacquard cover with grey flowers"><p class="badge">Signature</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:.5">Medium</li><li>7″</li><li>10-year guarantee</li></ul>
@@ -364,7 +382,7 @@
         </dl>
       </article>
 
-      <article class="card card--wide" id="vento" data-feel="Hard" data-model="vento" data-thick="5″">
+      <article class="card" id="vento" data-feel="Hard" data-model="vento" data-thick="5″">
         <figure class="card-photo"><img src="images/vento.webp" width="1000" height="459" loading="lazy" alt="Easy Comfort Sleep Solutions Vento mattress in a tropical print cover with toucans and flowers"></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:1">Hard</li><li>5″</li><li>5-year guarantee</li></ul>
@@ -390,7 +408,7 @@
       </article>
 
       <!-- The product sheet has no photo of the pillows yet, so this card draws one -->
-      <article class="card card--stat" id="pillows" data-feel="Pillows" data-sizes="King, 30″ × 20″|Queen, 18″ × 27″|Standard, 16″ × 24″">
+      <article class="card" id="pillows" data-feel="Pillows" data-sizes="King, 30″ × 20″|Queen, 18″ × 27″|Standard, 16″ × 24″">
         <figure class="card-photo card-photo--drawn" aria-hidden="true">
           <svg viewBox="0 0 320 180" width="320" height="180"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e1da"/></linearGradient></defs>
             <path d="M44 58c-6-18 4-30 22-30 40 8 148 8 188 0 18 0 28 12 22 30-6 18-6 46 0 64 6 18-4 30-22 30-40-8-148-8-188 0-18 0-28-12-22-30 6-18 6-46 0-64z" fill="url(#pg)" stroke="#b9b6ad" stroke-width="2"/>
@@ -523,7 +541,6 @@
 </dialog>
 
 <footer class="foot" id="foot">
-  <p class="foot-mark" aria-hidden="true">Easy Comfort Sleep Solutions</p>
   <div class="foot-in">
     <div class="label label--brand" data-rv>
       <p class="label-line">Easy Comfort Sleep Solutions</p>
@@ -555,7 +572,7 @@
 
 <script src="site.js"></script>
 <script src="products.js"></script>
-<script src="film.js"></script>
+<script src="hero.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

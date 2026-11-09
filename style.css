@@ -233,60 +233,90 @@ html.is-loading .nav{opacity:0;transform:translate(-50%,-24px);pointer-events:no
 .loader.is-done .ld-foot,.loader.is-done .ld-bar{opacity:0}
 html.deep .loader{display:none}
 
-/* ---------- First section: the film (film.js) ----------
-   A tall track and one pinned screen; scrolling plays the video frame by frame on a canvas.
-   Wide screens: the film covers the screen, the words stand on the right over the curtains, with a shade behind them.
-   Upright screens: the film is a band under the nav, the words below it. film.js sets --fp (progress) and --cue. */
-.film{--span:520vh;position:relative;height:calc(var(--span) + 100vh)}
-.film-stage{position:sticky;top:0;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:var(--bg)}
-.film-canvas,.film-poster{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
-.film-poster{object-fit:cover;object-position:96% 47%;transition:opacity .4s}
-.film-stage.is-playing .film-poster{opacity:0;pointer-events:none}
-:root:not([data-theme=morning]) .film-canvas,:root:not([data-theme=morning]) .film-poster{filter:brightness(.9) saturate(.96)}   /* the same morning light, a touch quieter at night */
-.film-shade{position:absolute;inset:0;z-index:1;pointer-events:none;
+/* ---------- First section: the hero film (hero.js) ----------
+   One screen. The film loops behind the headline; wide screens: the words on the right over the curtains with a shade
+   behind them; upright screens: the film is a band under the nav, the words below. Three chapters along the bottom follow it. */
+.vhero{position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden;background:var(--bg)}
+.vhero-video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:88% 47%}
+:root:not([data-theme=morning]) .vhero-video{filter:brightness(.9) saturate(.96)}   /* the same morning light, a touch quieter at night */
+.vhero-shade{position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(270deg,color-mix(in srgb,var(--bg) 80%,transparent) 0%,color-mix(in srgb,var(--bg) 64%,transparent) 28%,transparent 52%),
-    linear-gradient(0deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 40%,transparent) 9%,transparent 22%),
+    linear-gradient(0deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 40%,transparent) 10%,transparent 24%),
     linear-gradient(180deg,color-mix(in srgb,var(--bg) 45%,transparent) 0%,transparent 16%)}
-.film-copy{position:absolute;z-index:2;top:0;bottom:0;right:var(--gut);width:min(31rem,35vw);display:grid;align-items:center;pointer-events:none}
-.film-block{grid-area:1/1;opacity:0;visibility:hidden;will-change:opacity,transform}
-.film-block.is-on{pointer-events:auto}
-.film .cap{position:static;width:auto;transform:none}
-.film-hero h1{margin-top:.3em;font:900 clamp(3rem,5vw,6.2rem)/.9 var(--sans);letter-spacing:-.03em;text-transform:uppercase;color:var(--fg)}
-.film-hero .hero-lead{margin-top:.9em}
-.film-hero .hero-ctas{flex-wrap:wrap}
-.film-hero .hero-facts{margin-top:clamp(22px,3vw,40px)}
-.film-cap h2{font-size:clamp(2.1rem,3.1vw,3.6rem)}
-.film-cap{padding:clamp(22px,2.3vw,34px) clamp(22px,2.3vw,34px) clamp(24px,2.5vw,36px);border-radius:28px;background:var(--glass-2);
-  -webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);box-shadow:inset 0 0 0 1px var(--glass-line),0 30px 60px -30px rgba(0,0,0,.6)}   /* a plate: the layers can rise behind it */
-.film-cue{position:absolute;z-index:2;left:50%;bottom:clamp(18px,3.4vh,34px);display:grid;justify-items:center;gap:10px;transform:translateX(-50%);opacity:var(--cue,1);pointer-events:none;
-  font-size:.72rem;font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:var(--fg-2);white-space:nowrap}
-.film-cue i{position:relative;width:24px;height:38px;border-radius:12px;box-shadow:inset 0 0 0 2px var(--fg-2)}
-.film-cue i::after{content:"";position:absolute;left:50%;top:8px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:var(--orange);animation:cue 1.8s var(--ease) infinite}
-@keyframes cue{0%{transform:translateY(0);opacity:0}25%{opacity:1}70%{transform:translateY(12px);opacity:0}100%{opacity:0}}
-.film-bar{position:absolute;z-index:2;left:0;right:0;bottom:0;height:3px;background:var(--line)}
-.film-bar i{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--accent) 0 14px,transparent 14px 22px);transform-origin:0 50%;transform:scaleX(var(--fp,0))}
-html.is-loading .film-copy,html.is-loading .film-cue{opacity:0}
+.vhero-in{position:absolute;z-index:2;top:0;bottom:0;right:var(--gut);width:min(31rem,35vw);display:grid;align-items:center}
+.vhero-text .hero-eyebrow{letter-spacing:.22em}
+.vhero-text h1{margin-top:.3em;font:900 clamp(3rem,5vw,6.2rem)/.9 var(--sans);letter-spacing:-.03em;text-transform:uppercase;color:var(--fg)}
+.vhero-text .hero-lead{margin-top:.9em}
+.vhero-text .hero-ctas{flex-wrap:wrap}
+.vhero-text .hero-facts{margin-top:clamp(22px,3vw,40px)}
+.vhero-chapters{position:absolute;z-index:2;left:var(--gut);right:calc(var(--gut) + 64px);bottom:clamp(20px,3.6vh,36px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;
+  max-width:640px;margin:0;padding:0;list-style:none}
+.vhero-chapters li{position:relative;padding-bottom:12px;font-size:.72rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-3);transition:color .4s}
+.vhero-chapters b{margin-right:.7em;color:inherit;font-weight:800}
+.vhero-chapters li.is-on{color:var(--fg)}
+.vhero-chapters li.is-on b{color:var(--accent-ink)}
+.vhero-chapters li::after,.vhero-chapters i{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px}
+.vhero-chapters li::after{background:var(--line-2)}
+.vhero-chapters i{z-index:1;background:var(--orange);transform:scaleX(0);transform-origin:0 50%}
+.vhero-pause{position:absolute;z-index:3;right:var(--gut);bottom:clamp(14px,3vh,30px);width:44px;height:44px;border:0;border-radius:50%;cursor:pointer;
+  background:var(--glass-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--glass-line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.vhero-pause i{position:absolute;left:50%;top:50%;width:12px;height:14px;transform:translate(-50%,-50%)}
+.vhero-pause i::before,.vhero-pause i::after{content:"";position:absolute;top:0;bottom:0;width:4px;border-radius:1px;background:currentColor}
+.vhero-pause i::before{left:0}.vhero-pause i::after{right:0}
+.vhero-pause.is-paused i::before{left:2px;width:0;height:0;border-radius:0;background:none;border-style:solid;border-width:7px 0 7px 12px;border-color:transparent transparent transparent currentColor}
+.vhero-pause.is-paused i::after{display:none}
+html.is-loading .vhero-in,html.is-loading .vhero-chapters{opacity:0}
 @media (orientation:portrait),(max-width:760px){
-  .film-canvas,.film-poster{top:calc(84px + env(safe-area-inset-top,0px));height:min(75vw,44svh);
+  .vhero{height:auto;min-height:100svh;display:flex;flex-direction:column;padding:calc(84px + env(safe-area-inset-top,0px)) 0 74px}
+  .vhero-video{position:relative;inset:auto;height:min(75vw,44svh);object-position:48% 50%;flex:none;
     -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 9%,#000 86%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 9%,#000 86%,transparent 100%)}
-  .film-poster{object-position:48% 50%}
-  .film-shade{display:none}
-  .film-copy{left:var(--gut);right:var(--gut);width:auto;top:calc(84px + env(safe-area-inset-top,0px) + min(75vw,44svh) + 14px);bottom:62px;align-items:start}
-  .film-hero h1{font-size:clamp(2.6rem,11vw,4.4rem)}
-  .film-hero .hero-lead{font-size:1rem}
-  .film-hero .hero-eyebrow{justify-content:flex-start;font-size:.72rem;letter-spacing:.24em}
-  .film-hero .hero-lead{max-width:34ch;margin:.7em 0 0}
-  .film-hero .hero-ctas{justify-content:flex-start;margin-top:18px;gap:10px}
-  .film-hero .hero-ctas .btn{min-height:48px;padding:0 18px;font-size:.95rem}
-  .film-hero .hero-facts{display:none}
-  .film-cap h2{font-size:clamp(2rem,8.6vw,3rem)}
-  .film-cap{padding:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}   /* below the band: plain page */
-  .film-cap p:last-child{font-size:1rem}
+  .vhero-shade{display:none}
+  .vhero-in{position:relative;inset:auto;width:auto;margin:14px var(--gut) 0;display:block}
+  .vhero-text h1{font-size:clamp(2.6rem,11vw,4.4rem)}
+  .vhero-text .hero-eyebrow{justify-content:flex-start;font-size:.72rem;letter-spacing:.24em}
+  .vhero-text .hero-lead{max-width:34ch;margin:.7em 0 0;font-size:1rem}
+  .vhero-text .hero-ctas{justify-content:flex-start;margin-top:18px;gap:10px}
+  .vhero-text .hero-ctas .btn{min-height:48px;padding:0 18px;font-size:.95rem}
+  .vhero-text .hero-facts{display:none}
+  .vhero-chapters{right:calc(var(--gut) + 56px);bottom:22px;gap:10px}
+  .vhero-chapters li{font-size:.62rem;letter-spacing:.14em}
+  .vhero-chapters b{display:block;margin:0 0 2px}
+  .vhero-pause{bottom:18px}
 }
 @media (orientation:portrait) and (min-width:761px){   /* upright tablets: a taller band, the words wider */
-  .film-canvas,.film-poster{height:min(75vw,50svh)}
-  .film-copy{top:calc(84px + min(75vw,50svh) + 24px);left:calc(var(--gut) + 4vw);right:calc(var(--gut) + 4vw)}
+  .vhero-video{height:min(75vw,50svh)}
+  .vhero-in{margin:24px calc(var(--gut) + 4vw) 0}
 }
+
+/* ---------- What is inside: the film's three chapters, in words ---------- */
+.inside{padding:clamp(70px,11vh,120px) var(--gut) clamp(20px,4vh,40px);background:var(--bg)}
+.inside-grid{max-width:var(--max);margin:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+/* each chapter: its moment from the film, a large number, the words rising out of the picture */
+.inside-card{position:relative;isolation:isolate;display:flex;flex-direction:column;min-width:0;border-radius:30px;overflow:hidden;background:var(--surface);
+  box-shadow:var(--card-shadow),inset 0 0 0 1px var(--line);transition:transform .7s var(--ease),box-shadow .7s var(--ease)}
+.inside-card::before{content:"";position:absolute;inset:0;z-index:4;border-radius:inherit;padding:1.5px;pointer-events:none;opacity:0;transition:opacity .5s;
+  background:conic-gradient(from var(--ang),transparent 0 60%,rgba(233,196,143,.85) 70%,#fff3dc 75%,rgba(233,196,143,.85) 80%,transparent 90%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.inside-card:hover{transform:translateY(-8px);box-shadow:var(--card-shadow-2)}
+.inside-card:hover::before{opacity:1;animation:edge 3.4s linear infinite}
+.inside-photo{position:relative;margin:0;aspect-ratio:4/3;overflow:hidden;background:var(--bg-2)}
+.inside-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%;transform:scale(1.03);transition:transform 1.4s var(--ease)}
+:root:not([data-theme=morning]) .inside-photo img{filter:brightness(.88) saturate(.95)}
+.inside-card:hover .inside-photo img{transform:scale(1.09)}
+.inside-photo::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.28) 0%,transparent 30%,transparent 52%,var(--surface) 99%)}
+.inside-num{position:absolute;z-index:1;left:clamp(20px,2vw,28px);top:clamp(12px,1.4vw,18px);font:400 clamp(4.4rem,6.4vw,6.6rem)/1 var(--display);letter-spacing:.01em;
+  color:rgba(255,250,242,.95);text-shadow:0 10px 30px rgba(0,0,0,.35)}
+.inside-body{position:relative;flex:1;margin-top:-58px;padding:0 clamp(24px,2.4vw,34px) clamp(28px,2.6vw,38px)}
+.inside-card h2{margin-top:.5em;font:900 clamp(1.6rem,2.1vw,2.3rem)/.98 var(--sans);letter-spacing:-.03em;text-transform:uppercase;color:var(--fg);text-wrap:balance}
+.inside-card h2 em{font-style:normal;background:linear-gradient(180deg,var(--orange),var(--orange-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.inside-card .inside-body p:last-child{margin-top:.9em;color:var(--fg-2);font-size:1rem;line-height:1.6}
+/* rising in: the picture opens like a window, the number follows */
+.js .inside-card.rv .inside-photo{clip-path:inset(12% 9% 12% 9% round 22px);transition:clip-path 1.25s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--rd,0s) + .08s)}
+.js .inside-card.rv.is-in .inside-photo{clip-path:inset(0 0 0 0 round 0)}
+.js .inside-card.rv .inside-num{opacity:0;transform:translateY(18px);transition:opacity .8s var(--ease),transform 1s var(--ease);transition-delay:calc(var(--rd,0s) + .45s)}
+.js .inside-card.rv.is-in .inside-num{opacity:1;transform:none}
+@media (max-width:960px){.inside-grid{grid-template-columns:1fr}}
 
 /* ---------- Second section: the 3D showroom (the stage below is one screen, no longer pinned to a story) ---------- */
 .story.story--show{height:auto}
@@ -298,7 +328,6 @@ html.is-loading .film-copy,html.is-loading .film-cue{opacity:0}
    Then the stage becomes the showroom. script.js sets --copy, --show, --p, --lift on the stage. */
 .story{--span:440vh;position:relative;height:calc(var(--span) + 100vh)}
 .anchor{position:absolute;left:0;width:1px;height:1px;pointer-events:none}
-#inside{top:calc(var(--span)*.52)}   /* "See what's inside": the film with its layers apart */
 .stage{position:sticky;top:0;height:100vh;height:100svh;min-height:560px;overflow:hidden;
   background:radial-gradient(52% 46% at 50% 62%,var(--glow-a) 0%,transparent 72%),radial-gradient(40% 50% at 12% 70%,var(--glow-b),transparent 70%),var(--bg)}
 .bed-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.1s ease;touch-action:pan-y}
@@ -442,13 +471,8 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
   background:var(--surface);box-shadow:inset 0 0 0 1px var(--line),var(--card-shadow)}
 .filter .key-top{display:flex;align-items:baseline;gap:7px;padding:10px 18px;background:transparent;box-shadow:none;font-size:.9375rem}
 .filter .key-top small{display:inline;font-size:.8125rem}
-.grid{max-width:var(--max);margin:auto;display:grid;gap:18px;grid-template-columns:repeat(12,minmax(0,1fr));
-  grid-template-areas:"aura aura aura aura aura euro euro euro euro euro euro euro" "aura aura aura aura aura cpt cpt cpt cpt emma emma emma"
-    "imp imp imp imp plush plush plush plush eco eco eco eco" "vento vento vento vento vento vento vento pil pil pil pil pil"}
-#prime-aura{grid-area:aura}#camellia-euro-top{grid-area:euro}#camellia-pillow-top{grid-area:cpt}#emma-french-top{grid-area:emma}
-#imperio{grid-area:imp}#hybrid-plush{grid-area:plush}#hybrid-eco{grid-area:eco}#vento{grid-area:vento}#pillows{grid-area:pil}
-.grid.is-filtered{grid-template-areas:none;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
-.grid.is-filtered>.card{grid-area:auto}
+/* One list: every card the same width and height, three across (two on tablets, one on phones) */
+.grid{max-width:var(--max);margin:auto;display:grid;gap:20px;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:1fr;align-items:stretch}
 
 @property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
 .card{--mx:50%;--my:0%;--rx:0deg;--ry:0deg;--px:0px;--py:0px;--glare:0;position:relative;isolation:isolate;display:flex;flex-direction:column;min-width:0;border-radius:28px;overflow:hidden;
@@ -466,8 +490,6 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
 .card:hover::before{opacity:1;animation:edge 3.4s linear infinite}
 .card:hover::after{box-shadow:inset 0 0 0 1px var(--line-2)}
 @keyframes edge{to{--ang:360deg}}
-.card--feature::before{opacity:.5;--ang:200deg}   /* the Signature card always wears it; it runs only while you are on it */
-.card--feature:hover::before{opacity:1}
 /* Each mattress stands in the bedroom from the film, out of focus behind it: the lamp side at night, the window side in the morning.
    The room drifts a little as the page scrolls (--sy, script.js) and comes closer under the pointer */
 .card-photo{position:relative;isolation:isolate;margin:0;aspect-ratio:16/10;display:grid;place-items:center;overflow:hidden;background:var(--bg-2)}
@@ -524,11 +546,6 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
 .card-open:hover{background:var(--pill-2)}
 .card-open:hover::after{transform:translateX(3px) rotate(45deg)}
 .spec{display:none}
-/* Signature, tall */
-.card--feature .card-photo{aspect-ratio:auto;flex:1;min-height:320px}
-.card--feature .card-photo img{padding:9% 6% 13%}
-.card--feature .card-body{flex:none}
-.card--feature h3{font-size:clamp(2.2rem,3.2vw,3.3rem);line-height:.92}
 /* Imperio: two covers, one switch */
 .colour-toggle{position:absolute;z-index:2;right:14px;bottom:14px;display:flex;gap:2px;padding:4px;border-radius:999px;background:var(--glass-2);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--glass-line),0 8px 20px -12px rgba(0,0,0,.5)}
@@ -536,7 +553,6 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
 .colour-toggle button i{width:17px;height:17px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
 .colour-toggle button[aria-pressed=true]{background:var(--surface);color:var(--fg);box-shadow:0 2px 8px rgba(0,0,0,.18)}
 /* Pillows: a drawn pillow and its sizes */
-.card--stat .card-photo{aspect-ratio:auto;min-height:190px;flex:1}
 .card-photo--drawn svg{position:relative;z-index:1;width:54%;height:auto;filter:var(--prod-shadow)}
 .card-stat{position:absolute;z-index:2;right:24px;top:20px;text-align:right;font:400 4.4rem/.8 var(--display);color:var(--fg)}
 .card-stat small{display:block;margin-top:6px;font:700 .6875rem/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-3)}
@@ -852,31 +868,21 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
 .detail-nav button:hover{background:var(--pill-2);transform:translateY(-1px)}
 
 /* ---------- Footer: the quilted cover of the bed, lit by a lamp that follows the pointer ---------- */
-.foot{position:relative;isolation:isolate;min-height:clamp(620px,92vh,880px);overflow:hidden;background:#101116;color:var(--fg)}
-/* The bedroom from the film, the bed made: a soft shade from the page above, darker at night */
-.foot::before{content:"";position:absolute;inset:0;z-index:-2;background:url(images/footer-bed.webp) 50% 62%/cover no-repeat}
-.foot::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(180deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 22%,color-mix(in srgb,var(--bg) 42%,transparent) 55%,color-mix(in srgb,#000 55%,transparent) 100%)}
-:root[data-theme=morning] .foot::after{background:linear-gradient(180deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 55%,transparent) 24%,color-mix(in srgb,var(--bg) 8%,transparent) 56%,rgba(48,32,20,.62) 100%)}
-.foot-mark{position:absolute;left:0;right:0;bottom:.04em;margin:0;padding:0 3vw;text-align:center;pointer-events:none;white-space:nowrap;
-  font:400 clamp(40px,8.4vw,168px)/.86 var(--display);letter-spacing:.01em;text-transform:uppercase;color:rgba(255,248,238,.92);text-shadow:0 8px 40px rgba(0,0,0,.45)}
-.foot-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:start;gap:24px;padding:clamp(56px,9vh,96px) var(--gut) 0}
-.label{position:relative;width:min(470px,100%);padding:28px 30px 24px;border-radius:18px;background:var(--glass-2);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  box-shadow:inset 0 0 0 1px var(--glass-line),0 18px 34px -12px rgba(0,0,0,.5)}
-.label::before{content:"";position:absolute;inset:8px;border:1.5px dashed var(--line-2);border-radius:12px;pointer-events:none}
-.label--brand{justify-self:start}
-.label--contact{justify-self:end;width:min(420px,100%)}
-.label-line{font:400 clamp(2.8rem,4.4vw,3.8rem)/.88 var(--display);letter-spacing:.02em;text-transform:uppercase}
-.label-tag{margin-top:8px;font-size:.8125rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-ink)}
-.label nav{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:20px}
-.label nav a{padding:3px 0;text-underline-offset:4px;text-decoration-color:var(--line-2)}
-.label nav a:hover{text-decoration-color:var(--accent)}
-.label-small{margin-top:16px;font-size:.875rem;color:var(--fg-2)}
-.label-h{font:400 1.6rem/1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--accent-ink)}
-.label-block+.label-block{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
-.label-block a{display:block;width:max-content;max-width:100%;margin-top:8px;overflow-wrap:anywhere;text-underline-offset:4px;text-decoration-color:var(--line-2)}
-.label-block a:hover{text-decoration-color:var(--accent)}
-.label-block address{margin-top:8px;line-height:1.5}
+.foot{position:relative;background:var(--bg-2);color:var(--fg);border-top:1px solid var(--line)}
+/* Footer: plain and quiet. The name, the links and the ©; then how to reach us and where to visit */
+.foot-in{max-width:var(--max);margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px;padding:clamp(56px,9vh,84px) var(--gut) clamp(40px,7vh,64px)}
+.label{position:relative}
+.label--contact{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px 48px}
+.label-line{font:400 clamp(2rem,3vw,2.6rem)/.92 var(--display);letter-spacing:.02em;text-transform:uppercase}
+.label-tag{margin-top:8px;font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-ink)}
+.label nav{display:flex;flex-wrap:wrap;gap:4px 20px;margin-top:22px}
+.label nav a{padding:3px 0;color:var(--fg-2);text-decoration:none;transition:color .2s}
+.label nav a:hover{color:var(--fg)}
+.label-small{margin-top:22px;font-size:.8125rem;color:var(--fg-3)}
+.label-h{font:700 .72rem/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--fg-3)}
+.label-block a{display:block;width:max-content;max-width:100%;margin-top:12px;overflow-wrap:normal;color:var(--fg);text-decoration:none;transition:color .2s}
+.label-block a:hover{color:var(--accent-ink)}
+.label-block address{margin-top:12px;line-height:1.55;color:var(--fg-2);white-space:nowrap}
 .tag-wrap{position:relative;width:176px;flex:none;margin-top:calc(clamp(56px,9vh,96px)*-1);padding-top:clamp(40px,7vh,70px);text-align:center}
 .tag-wrap::before{content:"";position:absolute;top:0;left:50%;height:clamp(40px,7vh,70px);width:1.5px;background:var(--fg-2);opacity:.55}
 .tag{position:relative;width:176px;padding:22px 16px 16px;border:0;border-radius:4px;background:var(--glass-2);color:var(--fg);font:400 1.5rem/1 var(--display);letter-spacing:.03em;text-transform:uppercase;cursor:pointer;
@@ -939,12 +945,7 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
   .wing{width:clamp(220px,23vw,260px)}
 }
 @media (max-width:1100px){
-  .grid:not(.is-filtered){grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"aura aura" "euro euro" "cpt emma" "imp plush" "eco pil" "vento vento"}
-  .grid:not(.is-filtered) .card--feature{flex-direction:row}
-  .grid:not(.is-filtered) .card--feature .card-photo{min-height:360px;flex:1.3}
-  .grid:not(.is-filtered) .card--feature .card-body{flex:1;justify-content:center}
-  .foot-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-  .foot-in .tag-wrap{grid-column:1/-1;grid-row:1;justify-self:end;margin-top:calc(clamp(56px,9vh,96px)*-1);margin-bottom:-40px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .night{grid-template-columns:1fr;text-align:center;justify-items:center}
   .night-line,.night-sub{margin-left:auto;margin-right:auto}
   .night-scene{width:100%;max-width:880px}
@@ -952,12 +953,6 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
   .steps-list{grid-template-columns:repeat(2,minmax(0,1fr))}
   .stores-in{grid-template-columns:1fr}
   .map{position:relative;top:0;max-width:520px;width:100%;margin:auto}
-}
-@media (min-width:700px){
-  .grid:not(.is-filtered) .card--wide{flex-direction:row-reverse}
-  .grid:not(.is-filtered) .card--wide .card-photo{aspect-ratio:auto;flex:1.35;min-height:300px}
-  .grid:not(.is-filtered) .card--wide .card-body{flex:1;justify-content:center;padding:30px 30px 30px 32px}
-  .grid:not(.is-filtered) .card--wide .card-foot{margin-top:24px}
 }
 @media (max-width:960px){
   .questions{grid-template-columns:1fr}
@@ -1047,20 +1042,14 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
   .slab button{padding:18px 16px}
   .slab-a p{padding:0 16px 16px}
   .foot{min-height:auto}
-  .foot-in{grid-template-columns:1fr;padding-bottom:34vw;padding-top:0}
-  .foot-mark{white-space:normal;font-size:clamp(40px,14vw,92px);line-height:.84;bottom:.08em}
-  .foot-in .tag-wrap{grid-row:auto;order:-1;justify-self:center;margin:0 auto 4px;padding-top:42px}
+  .foot-in{grid-template-columns:1fr;gap:32px}
   .tag-wrap::before{height:42px}
   .label,.label--contact{justify-self:stretch;width:auto}
   .svc-card,.svc-card--wide{grid-column:1/-1}
   .band-in{flex-direction:column;align-items:flex-start}
 }
 @media (max-width:699px){
-  .grid:not(.is-filtered){grid-template-columns:1fr;grid-template-areas:none}
-  .grid>.card{grid-area:auto!important}
-  .grid:not(.is-filtered) .card--feature{flex-direction:column}
-  .grid:not(.is-filtered) .card--feature .card-photo{min-height:0;aspect-ratio:16/11;flex:none}
-  .card--stat .card-photo{min-height:180px;flex:none}
+  .grid{grid-template-columns:1fr}
   .steps-list{grid-template-columns:1fr}
 }
 @media (max-width:560px){
@@ -1071,7 +1060,9 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
   .detail{width:calc(100vw - 16px);max-height:calc(100svh - 16px)}
   .detail-in{max-height:calc(100svh - 16px)}
   .ask{padding:16px 14px 14px}
-  .label{padding:24px 22px 20px}
+  .label--contact{grid-template-columns:1fr;gap:22px}
+  .label-block a{overflow-wrap:anywhere}
+  .label-block address{white-space:normal}
   .why-credit{position:static;margin-top:18px}
 }
 @media (prefers-reduced-motion:reduce){
