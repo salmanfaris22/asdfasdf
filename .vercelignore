@@ -1,0 +1,7 @@
+# only the site itself goes to Vercel
+src
+_old-twain
+_backup
+*.md
+!assets3d/CREDITS.md
+.DS_Store
