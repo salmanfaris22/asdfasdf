@@ -942,7 +942,7 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
   .nav-menu{display:block}
   .why-cards{grid-template-columns:1fr;max-width:420px}
   .why-panel{min-height:0}
-  .why-credit{position:static;margin-top:16px;text-align:center}   /* under the stacked cards, not behind them */
+  .why-credit{position:relative;z-index:3;margin-top:16px;text-align:center}   /* under the stacked cards, and above them while they slide */
   .explore-grid{grid-template-columns:1fr}
 }
 @media (max-width:860px){

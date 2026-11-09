@@ -1,15 +1,94 @@
 /* Easy Comfort bed: the real-time 3D showroom.
    Source for ../bed3d.js. Every fabric, print and foam texture is drawn here in code,
-   because browsers refuse image files as WebGL textures on file:// pages. */
+   because browsers refuse image files as WebGL textures on file:// pages. Served over http(s), the rooms then put on
+   real materials: photo-scanned wood, plaster, wool and linen, a real bedroom's light, real views and real plants
+   (all CC0, from Poly Haven, in ../assets3d). */
 import {
-  ACESFilmicToneMapping, AdditiveBlending, BoxGeometry, BufferAttribute, BufferGeometry, CanvasTexture, CircleGeometry,
+  ACESFilmicToneMapping, AdditiveBlending, Box3, BoxGeometry, BufferAttribute, BufferGeometry, CanvasTexture, CircleGeometry,
   Color, Curve, CylinderGeometry, Euler, DataTexture, DirectionalLight, DoubleSide, ExtrudeGeometry, Group, HemisphereLight,
   LatheGeometry, LinearFilter, LinearMipmapLinearFilter, Matrix4, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshPhysicalMaterial,
   MeshStandardMaterial, MirroredRepeatWrapping, PCFShadowMap, PerspectiveCamera, Plane, PlaneGeometry,
   PMREMGenerator, PointLight, Points, Quaternion, Raycaster, RepeatWrapping, RGBAFormat, Scene, ShaderMaterial, Shape, ShapeGeometry, SpotLight, Sprite, SpriteMaterial,
-  SRGBColorSpace, Texture, TubeGeometry, Vector2, Vector3, Vector4, WebGLRenderer,
+  SRGBColorSpace, Texture, TextureLoader, TubeGeometry, Vector2, Vector3, Vector4, WebGLRenderer,
 } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import { OAK_RAIL, OAK_PLANK } from './oak-data.js';
+
+/* ---------- Real materials, light, views and plants ----------
+   Fetched only over http(s). Each piece resolves on its own (null if it fails), so the drawn version stays until it lands. */
+const HTTP = /^https?:$/.test(location.protocol);
+const SCRIPT_SRC = document.currentScript?.src || location.href;
+const assetUrl = (p) => new URL(`assets3d/${p}`, SCRIPT_SRC).href;
+let REAL = null;
+function realAssets(small) {
+  if (!HTTP) return null;
+  if (REAL) return REAL;
+  const tl = new TextureLoader(), gl = new GLTFLoader();
+  const T = (p, srgb) => new Promise((res) => tl.load(assetUrl(p), (t) => {
+    t.wrapS = t.wrapT = RepeatWrapping; t.anisotropy = maxAniso; if (srgb) t.colorSpace = SRGBColorSpace; res(t);
+  }, undefined, () => res(null)));
+  const set = (n, big, col = true) => {   // col false: relief and roughness only, the material keeps its own colour
+    const s = big && small ? '-sm' : '';
+    return Promise.all([col ? T(`tex/${n}-col${s}.webp`, true) : null, T(`tex/${n}-nor${s}.webp`), T(`tex/${n}-rough.webp`)])
+      .then(([map, normalMap, roughnessMap]) => (normalMap && (map || !col) ? { map, normalMap, roughnessMap } : null));
+  };
+  const G = (f) => new Promise((res) => gl.load(assetUrl(`models/${f}`), (g) => res(g.scene), undefined, () => res(null)));
+  REAL = {
+    oak: set('oak', true), floor: set('floor', true), plaster: set('plaster', false, false), rug: set('rug', false, false), linen: set('linen', false, false),
+    jacquard: Promise.all([T('tex/jacquard-nor.webp'), T('tex/jacquard-rough.webp')]).then(([normalMap, roughnessMap]) => (normalMap ? { normalMap, roughnessMap } : null)),
+    env: new Promise((res) => new HDRLoader().load(assetUrl('env/room-morning.hdr'), res, undefined, () => res(null))),
+    viewM: T('env/view-morning.webp', true), viewN: T('env/view-night.webp', true),
+    plantTable: G('potted_plant_02.glb'), plantFloor: G('potted_plant_01.glb'), succulent: G('potted_plant_04.glb'),
+  };
+  return REAL;
+}
+/* a copy of a real texture laid at a given repeat and turn (copies share one upload) */
+function fitTex(t, rx, ry, rot = 0) {
+  if (!t) return null;
+  const c = t.clone(); c.repeat.set(rx, ry); c.rotation = rot; c.center.set(.5, .5); c.needsUpdate = true;
+  return c;
+}
+/* put a real material set on a three.js material: colour (unless keepMap), relief and roughness */
+function dress(m, set, rx, ry, rot = 0, o = {}) {
+  if (!set || !m) return;
+  if (!o.keepMap) m.map = fitTex(set.map, rx, ry, rot);
+  m.normalMap = fitTex(set.normalMap, rx, ry, rot);
+  m.normalScale?.set(o.ns ?? 1, o.ns ?? 1);
+  if (set.roughnessMap && !o.keepRough) { m.roughnessMap = fitTex(set.roughnessMap, rx, ry, rot); m.roughness = o.rough ?? 1; }
+  if (o.color) m.color.set(o.color);
+  m.needsUpdate = true;
+}
+/* a real model, stood on (x, y, z) in parent and scaled to a height */
+function placeModel(model, parent, x, y, z, height, rotY = 0) {
+  const g = new Group(); g.add(model);
+  const box = new Box3().setFromObject(model), size = box.getSize(new Vector3()), k = height / (size.y || 1);
+  model.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
+  g.scale.setScalar(k); g.position.set(x, y, z); g.rotation.y = rotY;
+  model.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.material.alphaTest > 0 || o.material.transparent) o.material.side = DoubleSide; } });
+  parent.add(g);
+  return g;
+}
+/* A band of a real panorama on a curved screen far outside, span radians wide round heading yaw. The photo covers p0 → p1
+   (elevation, radians); the screen runs from el0 (lower than p0) up to p1. Below the horizon the photo is drawn out by 1/k,
+   so a house up on a hill looks down onto the far valley, not onto the rocks by the photographer's feet. */
+function viewStrip(map, R, yaw, span, el0, p0, p1, k, eyeY, color = '#ffffff') {
+  const seg = 72, rows = 24, pos = [], uv = [], idx = [];
+  for (let j = 0; j <= rows; j++) {
+    const el = mix(el0, p1, j / rows), y = eyeY + Math.tan(el) * R, ep = el >= 0 ? el : Math.max(p0, el * k);
+    const v = (ep - p0) / (p1 - p0);
+    for (let i = 0; i <= seg; i++) {
+      const u = i / seg, a = yaw + (u - .5) * span;
+      pos.push(Math.sin(a) * R, y, -Math.cos(a) * R); uv.push(u, v);
+    }
+  }
+  for (let j = 0; j < rows; j++) for (let i = 0; i < seg; i++) { const a = j * (seg + 1) + i, b = a + seg + 1; idx.push(a, a + 1, b, a + 1, b + 1, b); }
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new BufferAttribute(new Float32Array(pos), 3)); geo.setAttribute('uv', new BufferAttribute(new Float32Array(uv), 2)); geo.setIndex(idx);
+  const m = new Mesh(geo, new MeshBasicMaterial({ map, color, toneMapped: false, side: DoubleSide, fog: false }));
+  m.frustumCulled = false;
+  return m;
+}
 
 const PI = Math.PI;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -447,6 +526,42 @@ class SoftBox {
 
 const softBox = (w, h, d, r, opt = {}) => new SoftBox({ cs: opt.cs ?? 2, seg: opt.seg ?? [8, 1, 12], groups: !!opt.groups }).fill(w, h, d, r, opt.shape, opt.tile ?? [1, 1, 1]);
 
+/* A pillow as it lies on a bed: two panels sewn at the edge, full in the middle, thin at the seam, the edges drawn in a
+   little between the corners, flatter underneath where it rests, and a few soft creases. W × D, T thick at the middle;
+   the underside's lowest point sits at y = base. UVs are in scene units, for a real fabric texture. */
+function pillowGeo(W, D, T, base, seed = 91, n = 44) {
+  const r = rng(seed), creases = Array.from({ length: 14 }, () => [r() * 1.8 - .9, r() * 1.8 - .9, .12 + r() * .3, (r() - .55) * .16]);
+  const pos = [], uv = [], idx = [];
+  const BOTTOM = .36;   // how full the underside is next to the top
+  [1, -1].forEach((side, s) => {
+    const start = s * (n + 1) * (n + 1);
+    for (let j = 0; j <= n; j++) {
+      for (let i = 0; i <= n; i++) {
+        const u = i / n * 2 - 1, v = j / n * 2 - 1;
+        const f = Math.pow(Math.max(0, (1 - Math.abs(u) ** 2.4) * (1 - Math.abs(v) ** 2.4)), .46);
+        let dent = 0;
+        for (const [cu, cv, cs, ca] of creases) dent += ca * Math.exp(-((u - cu) ** 2 + (v - cv) ** 2) / (cs * cs));
+        const x = u * W / 2 - Math.sign(u) * W * .028 * (1 - v * v) * Math.abs(u) ** 7;
+        const z = v * D / 2 - Math.sign(v) * D * .045 * (1 - u * u) * Math.abs(v) ** 7;
+        const y = side > 0 ? T / 2 * f * (1 + dent * (s ? 0 : 1)) : -T / 2 * f * BOTTOM;
+        pos.push(x, y - (-T / 2 * BOTTOM) + base, z);
+        uv.push((u + 1) / 2 * W, (v + 1) / 2 * D);
+      }
+    }
+    for (let j = 0; j < n; j++) {
+      for (let i = 0; i < n; i++) {
+        const a = start + j * (n + 1) + i, b = a + n + 1;
+        if (side > 0) idx.push(a, b, a + 1, a + 1, b, b + 1); else idx.push(a, a + 1, b, a + 1, b + 1, b);
+      }
+    }
+  });
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new BufferAttribute(new Float32Array(pos), 3));
+  geo.setAttribute('uv', new BufferAttribute(new Float32Array(uv), 2));
+  geo.setIndex(idx); geo.computeVertexNormals();
+  return geo;
+}
+
 class RoundRect extends Curve {
   constructor(w, d, r) { super(); this.w = w; this.d = d; this.r = r; }
   getPoint(t, out = new Vector3()) {
@@ -585,6 +700,7 @@ async function mount(canvas, init) {
   const topPlane = new Plane(new Vector3(0, 1, 0), -(BASE_Y + .7));
 
   /* Night room for reflections: dim blue with a warm lamp on one side and a moonlit window on the other */
+  let envDrawn = null, envReal = null;   // the drawn one; a real bedroom's light for the morning, once it is in
   {
     const env = new Scene(), pm = new PMREMGenerator(renderer);
     env.background = new Color('#1b2340');
@@ -596,7 +712,7 @@ async function mount(canvas, init) {
     panel('#9db8ff', 5, 7, 14, 15, 6, -7);
     panel('#ffe9d4', 1.6, 26, 12, 0, 16, 2);
     panel('#39456f', 1.2, 40, 40, 0, -10, 0);
-    scene.environment = pm.fromScene(env, .05).texture;
+    envDrawn = scene.environment = pm.fromScene(env, .05).texture;
     scene.environmentIntensity = .4;
     pm.dispose();
   }
@@ -888,9 +1004,7 @@ async function mount(canvas, init) {
     g.fillStyle = '#244a23'; g.fillRect(0, h * .84, w, h);
     g.globalCompositeOperation = 'source-atop'; grain(g, w, h, .07, 32); g.globalCompositeOperation = 'source-over';
   });
-  scenery(mFar, 220, 88, 95, 16, 1, roomR);
-  scenery(mMid, 120, 30, 50, -.5, 2, roomR);
-  scenery(mNear, 56, 20, 30, 1.2, 3, roomR);
+  const drawnViewM = [scenery(mFar, 220, 88, 95, 16, 1, roomR), scenery(mMid, 120, 30, 50, -.5, 2, roomR), scenery(mNear, 56, 20, 30, 1.2, 3, roomR)];
   // sheer curtains and a linen drape, gathered by the corner
   const sheerM = new MeshStandardMaterial({ color: '#ffffff', roughness: .95, transparent: true, opacity: .74, side: DoubleSide, depthWrite: false, emissive: new Color('#fff1de'), emissiveIntensity: .42 });
   const linenTex = canvasTex(256, 256, (g, w, h) => {
@@ -1028,7 +1142,8 @@ async function mount(canvas, init) {
   };
   domeLamp(leftM, .28, 2.09, -.34, 1, '#ffc98a');
   const lampM = new PointLight('#ffc78c', 0, 10, 2); lampM.position.set(.28, 2.95, -.34); leftSet.add(lampM);   // lights stay out of the groups that switch, so switching never rebuilds a shader
-  put(lathe([[0, 0], [.22, 0], [.26, .05], [.29, .42], [.31, .46], [.28, .47], [0, .42]]), ceramic, leftM, -.36, 2.09, .3);
+  const pothosPot = put(lathe([[0, 0], [.22, 0], [.26, .05], [.29, .42], [.31, .46], [.28, .47], [0, .42]]), ceramic, leftM, -.36, 2.09, .3);
+  let pothos;
   {
     const items = [], r = rng(57);
     for (let v = 0; v < 8; v++) {
@@ -1041,12 +1156,11 @@ async function mount(canvas, init) {
         items.push({ m: mtx(x, 2.09 + y, z, a + PI / 2 + (r() - .5) * 1.2, -.5 - r() * .9 + t * .8, (r() - .5) * .8, .17 + r() * .09), w: 1, h: 1 });
       }
     }
-    const pothos = new Mesh(cardsGeo(items), leafCards(heartLeaf)); pothos.castShadow = true; leftM.add(pothos);
+    pothos = new Mesh(cardsGeo(items), leafCards(heartLeaf)); pothos.castShadow = true; leftM.add(pothos);
     sway.push({ o: pothos, axis: 'z', amp: .012, speed: .7, ph: 0 });
   }
   // right: the oak stand, with books and a reed diffuser
-  put(softBox(1.9, 1.42, 1.5, .03, { seg: [2, 2, 2] }).geometry, M.oak, rightM, 0, 1.2, 0);
-  put(softBox(1.74, .62, .05, .012, { seg: [2, 2, 1] }).geometry, M.oak, rightM, 0, 1.42, .76);
+  const stand = [put(softBox(1.9, 1.42, 1.5, .03, { seg: [2, 2, 2] }).geometry, M.oak, rightM, 0, 1.2, 0), put(softBox(1.74, .62, .05, .012, { seg: [2, 2, 1] }).geometry, M.oak, rightM, 0, 1.42, .76)];
   put(new BoxGeometry(.42, .05, .05), brass, rightM, 0, 1.46, .8);
   [[-.8, -.6], [.8, -.6], [-.8, .6], [.8, .6]].forEach(([x, z]) => put(new CylinderGeometry(.06, .035, .5, 8), M.oak, rightM, x, .25, z));
   put(softBox(.96, .085, .7, .012, { seg: [1, 1, 1] }).geometry, new MeshStandardMaterial({ color: '#ece7de', roughness: .8 }), rightM, -.3, 1.955, .16).rotation.y = -.06;
@@ -1089,11 +1203,12 @@ async function mount(canvas, init) {
   const coveGlow = put(new PlaneGeometry(COVE.rx * 2 / .86 * 1.0, COVE.rz * 2 / .86), additive(coveTex, '#ffb46a', .55), ceiling, COVE.x, CEIL - .015, COVE.z, false);
   coveGlow.rotation.x = PI / 2; coveGlow.renderOrder = 1;
   // a slatted walnut wall with two LED strips, left of the bed
+  let slatWall;
   {
     const slats = [];
     for (let x = -5.26; x < -3.45; x += .31) { const b = new BoxGeometry(.2, CEIL, .13); b.translate(x, CEIL / 2, WALL_Z + .075); slats.push(b); }
     const slatTex = oakRail.clone(); slatTex.wrapS = slatTex.wrapT = RepeatWrapping; slatTex.repeat.set(.3, 3); slatTex.needsUpdate = true;
-    put(mergeGeos(slats), new MeshStandardMaterial({ color: '#7a5236', map: slatTex, roughness: .55 }), roomN);
+    slatWall = put(mergeGeos(slats), new MeshStandardMaterial({ color: '#7a5236', map: slatTex, roughness: .55 }), roomN);
     const stripTex = canvasTex(64, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.5, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
     [-4.795, -3.865].forEach((x) => {
       put(new BoxGeometry(.035, CEIL - .3, .02), ledMat('#ffc98a'), roomN, x, CEIL / 2, WALL_Z + .03, false);
@@ -1163,11 +1278,9 @@ async function mount(canvas, init) {
     g.fillStyle = '#0a100e'; g.fillRect(0, h * .91, w, h);
   });
   const sceneryN = (map, w, h, x, y, z, order) => { const m = new Mesh(new PlaneGeometry(w, h), new MeshBasicMaterial({ map, toneMapped: false, transparent: true, depthWrite: false })); m.position.set(x, y, z); m.renderOrder = order; roomN.add(m); return m; };
-  sceneryN(nFar, 340, 170, 18, 22, WALL_Z - 90, 1);
-  sceneryN(nMid, 190, 48, 14, -9, WALL_Z - 44, 2);
-  sceneryN(nNear, 34, 25.5, 10, 4.6, WALL_Z - 13, 3);
+  const drawnViewN = [sceneryN(nFar, 340, 170, 18, 22, WALL_Z - 90, 1), sceneryN(nMid, 190, 48, 14, -9, WALL_Z - 44, 2), sceneryN(nNear, 34, 25.5, 10, 4.6, WALL_Z - 13, 3)];
   const starMat = pointsMat('star', [1, .97, .9], .8);
-  cloudOfPoints(small ? 30 : 60, 9, (r) => [-40 + r() * 110, 22 + r() * 30, WALL_Z - 85], starMat, roomN);
+  drawnViewN.stars = cloudOfPoints(small ? 30 : 60, 9, (r) => [-40 + r() * 110, 22 + r() * 30, WALL_Z - 85], starMat, roomN);
   // a dark sheer at the far right of the windows
   const sheerN = new MeshStandardMaterial({ color: '#4b4c57', roughness: .95, transparent: true, opacity: .55, side: DoubleSide, depthWrite: false, emissive: new Color('#2a2440'), emissiveIntensity: .5 });
   curtain(sheerN, 2.6, 10.4, WALL_Z + .38, 2.2, 11, .11, roomN, 'x', CEIL - .12);
@@ -1179,14 +1292,15 @@ async function mount(canvas, init) {
   const floorLamp = domeLamp(leftN, FL.x + .58, PH + FL.h + .06 - 1.39 * 1.08, FL.z, 1.08, '#ffb870');
   floorLamp.children[0].visible = floorLamp.children[1].visible = false;   // the dome hangs from the arm: no base or stem of its own
   const lampN = new PointLight('#ffb36b', 0, 12, 1.8); lampN.position.set(FL.x + .58, PH + FL.h - .5, FL.z); leftSet.add(lampN);
-  put(lathe([[0, 0], [.36, 0], [.42, .62], [.45, .66], [.4, .68], [0, .6]]), new MeshStandardMaterial({ color: '#2b2b30', roughness: .55 }), leftN, .95, PH, -.9);
+  const palmPot = put(lathe([[0, 0], [.36, 0], [.42, .62], [.45, .66], [.4, .68], [0, .6]]), new MeshStandardMaterial({ color: '#2b2b30', roughness: .55 }), leftN, .95, PH, -.9);
+  let palm;
   {
     const items = [], r = rng(88);
     for (let i = 0; i < 26; i++) {
       const az = -2.6 + i / 25 * 4 + (r() - .5) * .35, el = .35 + r() * 1.0, len = 2.1 + r() * 2.1;
       items.push({ m: mtx(.95 + (r() - .5) * .2, PH + .55 + r() * .15, -.9 + (r() - .5) * .2, az, -(PI / 2 - el), (r() - .5) * .5, 1), w: .95 + r() * .3, h: len, bend: -.35 - r() * .65 });
     }
-    const palm = new Mesh(cardsGeo(items), leafCards(frondTex(true))); palm.castShadow = true; leftN.add(palm);
+    palm = new Mesh(cardsGeo(items), leafCards(frondTex(true))); palm.castShadow = true; leftN.add(palm);
     sway.push({ o: palm, axis: 'z', amp: .02, speed: .5, ph: 1.3 });
   }
 
@@ -1230,6 +1344,7 @@ async function mount(canvas, init) {
       roomWas = morning;
       roomM.visible = leftM.visible = rightM.visible = rug.visible = morning;
       roomN.visible = leftN.visible = !morning;
+      scene.environment = morning && envReal ? envReal : envDrawn;
       bed.contact.position.y = morning ? .012 : PH + .006;
     }
     key.position.lerpVectors(KEY.pos[0], KEY.pos[1], d); key.target.position.lerpVectors(KEY.at[0], KEY.at[1], d);
@@ -1428,9 +1543,8 @@ async function mount(canvas, init) {
   }
 
   /* Two standard pillows, 24 × 16 in */
-  const pb = softBox(2.4, .5, 1.6, .24, { cs: 4, seg: [14, 4, 10], shape: { crown: .1, bulge: .05 } });
   mat.pillows = [-1, 1].map((d) => {
-    const p = new Mesh(pb.geometry, M.pillow); p.castShadow = true; p.receiveShadow = true;
+    const p = new Mesh(pillowGeo(2.5, 1.66, .62, -.25, d > 0 ? 91 : 37, hi ? 44 : 28), M.pillow); p.castShadow = true; p.receiveShadow = true;
     p.position.set(d * 1.36, 0, -LEN / 2 + 1.06); p.rotation.set(-.07, d * .05, 0); mat.cover.add(p); return p;
   });
 
@@ -1505,6 +1619,8 @@ async function mount(canvas, init) {
   }
 
   const lookTex = {};
+  const flatRough = new DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, RGBAFormat); flatRough.needsUpdate = true;
+  const knit = { top: weave, side: weave, ns: .32, rTop: flatRough, rSide: flatRough };   // the plain covers' relief: drawn, until the real jacquard is in
   const texFor = (name) => {
     const L = LOOKS[name] ?? LOOKS.aura;
     if (!lookTex[name]) lookTex[name] = { top: paint(N, L.top, L.rep[0]), side: paint(N / 2, L.side ?? L.top, L.rep[1]) };
@@ -1515,8 +1631,9 @@ async function mount(canvas, init) {
     mat.look = L;
     texFor(name);
     M.top.map = lookTex[name].top; M.side.map = lookTex[name].side;
-    M.top.normalMap = L.quilt ? topQ : weave; M.side.normalMap = L.quilt ? sideQ : weave;
-    const ns = L.quilt ? .62 : .32; M.top.normalScale.set(ns, ns); M.side.normalScale.set(ns, ns);
+    M.top.normalMap = L.quilt ? topQ : knit.top; M.side.normalMap = L.quilt ? sideQ : knit.side;
+    const ns = L.quilt ? .62 : knit.ns; M.top.normalScale.set(ns, ns); M.side.normalScale.set(ns, ns);
+    M.top.roughnessMap = L.quilt ? flatRough : knit.rTop; M.side.roughnessMap = L.quilt ? flatRough : knit.rSide;   // always a map: no new shader on a swap
     M.top.sheen = M.side.sheen = L.dark ? .16 : .7;
     M.top.sheenColor.set(L.dark ? '#a9b8e6' : '#fff6ec'); M.side.sheenColor.copy(M.top.sheenColor);
     M.top.roughness = M.side.roughness = L.dark ? .86 : .92;
@@ -1787,6 +1904,58 @@ async function mount(canvas, init) {
     if ((busy || ambient) && S.visible) S.raf = requestAnimationFrame(loop);
   }
 
+  /* ---------- Real materials, light, views and plants (http only) ----------
+     Each piece goes on as it lands. Whatever is in before the loading screen lifts is compiled with everything else. */
+  const realIn = [];
+  {
+    const R = realAssets(small);
+    const on = (p, f) => realIn.push(p.then((v) => { if (v) { f(v); wake(); } }).catch(() => { /* the drawn version stays */ }));
+    const M2U = 3.937, D2R = PI / 180;   // scene units in a metre (1 unit = 10 in); degrees to radians
+    if (R) {
+      on(R.oak, (o) => {
+        const t = 1.83 * M2U;   // the oak scan covers 1.83 m
+        dress(M.oak, o, .1, 1.14, PI / 2, { color: '#ffffff', rough: .82, ns: .9 });   // rails and slats: grain along their length
+        const legMat = M.oak.clone(); dress(legMat, o, .09, .13, 0, { ns: .9 }); legs.forEach((l) => { l.material = legMat; });   // grain up the leg
+        dress(M.plank, o, .14, .95, PI / 2, { color: '#ffffff', rough: .8, ns: .9 });   // the headboard: grain across it
+        const standMat = M.oak.clone(); dress(standMat, o, 1 / t, 1 / t, 0, { ns: .9 }); stand.forEach((m) => { m.material = standMat; });
+        if (slatWall) dress(slatWall.material, o, .03, CEIL / t, 0, { color: '#7a5639', rough: .75 });   // the night's slatted wall, stained dark
+      });
+      on(R.floor, (o) => { const t = 1.7 * M2U; dress(floor.material, o, fD / t, fW / t, 0, { color: '#ffffff', rough: .8, ns: .8 }); });
+      on(R.plaster, (o) => {
+        const t = 2 * M2U;
+        dress(creamWall, o, (XR + 50) / t, 40 / t, 0, { keepMap: true, ns: .55 });
+        dress(panelMat, o, ARCH.A * 2 / t, archTop / t, 0, { keepMap: true, ns: .55 });
+        dress(darkWall, o, (XN0 + 55) / t, CEIL / t, 0, { keepMap: true, ns: .7 });
+      });
+      on(R.rug, (o) => { const t = .27 * M2U; dress(rug.material, o, 13.6 / t, 13.4 / t, 0, { keepMap: true, ns: 1.2 }); });
+      on(R.jacquard, (o) => {   // Belgian knitted jacquard, as on the real covers: the scan covers 28 cm
+        const t = .28 * M2U;
+        Object.assign(knit, { top: fitTex(o.normalMap, .92 / t, .92 / t), side: fitTex(o.normalMap, .62 / t, .62 / t), ns: .55, rTop: fitTex(o.roughnessMap, .92 / t, .92 / t), rSide: fitTex(o.roughnessMap, .62 / t, .62 / t) });
+        if (mat.lookName) applyLook(mat.lookName);
+      });
+      on(R.linen, (o) => { const t = .27 * M2U; dress(M.pillow, o, 1 / t, 1 / t, 0, { keepMap: true, ns: .9 }); });
+      on(R.env, (hdr) => {
+        const pm = new PMREMGenerator(renderer); envReal = pm.fromEquirectangular(hdr).texture; pm.dispose(); hdr.dispose();
+        roomWas = null; applyDay();
+      });
+      // the views: real panoramas behind the glass in place of the painted hills
+      on(R.viewM, (t) => {
+        drawnViewM.forEach((m) => { m.visible = false; });
+        const v = viewStrip(t, 130, Math.atan2(OUT_DIR.x, -OUT_DIR.z), PI, -48 * D2R, -25.2 * D2R, 50.4 * D2R, .8, 1.5);
+        v.position.set(CAM_AT.x, 0, CAM_AT.z); roomR.add(v);
+      });
+      on(R.viewN, (t) => {
+        drawnViewN.forEach((m) => { m.visible = false; }); drawnViewN.stars.visible = false;
+        const v = viewStrip(t, 140, .12, PI, -50 * D2R, -21.6 * D2R, 54 * D2R, .55, -10, '#a39bb8');
+        v.position.set(0, 0, 14); roomN.add(v);
+      });
+      // real plants in place of the painted ones
+      on(R.plantTable, (m) => { pothos.visible = pothosPot.visible = false; sway.push({ o: placeModel(m, leftM, -.36, 2.09, .3, 1.5, .5), axis: 'z', amp: .008, speed: .7, ph: 0 }); });
+      on(R.plantFloor, (m) => { palm.visible = palmPot.visible = false; sway.push({ o: placeModel(m, leftN, .95, PH, -.9, 4.3, .4), axis: 'z', amp: .01, speed: .5, ph: 1.3 }); });
+      on(R.succulent, (m) => { placeModel(m, rightM, .5, 1.91, .36, .78, .3); });
+    }
+  }
+
   /* ---------- Start ---------- */
   try {
     await Promise.all([document.fonts.load('200px "Young Serif"'), document.fonts.load('600 30px "Hanken Grotesk"'), document.fonts.load('400 30px "Hanken Grotesk"')]);
@@ -1820,6 +1989,8 @@ async function mount(canvas, init) {
   new IntersectionObserver(([e]) => { S.visible = e.isIntersecting; if (S.visible) wake(); }).observe(canvas);
 
   S.visible = true; placeCamera();
+  // the real materials get a few seconds behind the loading screen; any still on their way go on when they land
+  if (realIn.length) await Promise.race([Promise.all(realIn), new Promise((r) => setTimeout(r, small ? 2500 : 4000))]);
   // every shader compiled and every texture uploaded now, behind the loading screen, for both rooms: nothing stalls later
   {
     const hidden = [roomM, roomN, leftM, leftN, rightM, rug].filter((o) => !o.visible);
@@ -2353,6 +2524,21 @@ async function mountNight(canvas, init) {
   function tick(now) { raf = 0; if (render(now)) raf = requestAnimationFrame(tick); }
 
   try { await document.fonts.load('700 74px "Hanken Grotesk"'); } catch (e) { /* the clock still reads */ }
+  /* Real materials over http(s), as in the showroom: they go on as they land */
+  {
+    const R = realAssets(small), t = 1.83 * 3.937, on = (p, f) => p.then((v) => { if (v) { f(v); kick(); } }).catch(() => {});
+    if (R) {
+      on(R.oak, (o) => { dress(M.oak, o, .07, 1.1, PI / 2, { color: '#ffffff', rough: .82, ns: .9 }); dress(M.plank, o, 1 / t, 1 / t, PI / 2, { color: '#ffffff', rough: .8, ns: .9 }); });
+      on(R.floor, (o) => { const k = 1.7 * 3.937; dress(floor.material, o, 34 / k, 24 / k, 0, { rough: .7, ns: .8 }); });
+      on(R.plaster, (o) => { const k = 2 * 3.937; dress(wall.material, o, 34 / k, 16 / k, 0, { keepMap: true, ns: .7 }); });
+      on(R.linen, (o) => {
+        const k = .27 * 3.937;
+        dress(M.pillow, o, 1 / k, 1 / k, 0, { keepMap: true, ns: .9 });
+        dress(M.sheet, o, 9, 6.5, 0, { keepMap: true, ns: .6, keepRough: true });
+        dress(M.duvet, o, 9, 6.5, 0, { keepMap: true, ns: .8, keepRough: true });
+      });
+    }
+  }
   fit(); setModel(init.model); shape(init.settle ?? 0, 0); applyDay(); placeCam(); renderer.render(scene, camera); report();
   addEventListener('resize', () => { fit(); kick(); });
   if (window.ResizeObserver) new ResizeObserver(() => { fit(); kick(); }).observe(canvas);
