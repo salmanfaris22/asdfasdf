@@ -14,7 +14,7 @@
   d.setAttribute('data-theme', t === 'morning' ? 'morning' : 'night');
   var pal; try { pal = new URLSearchParams(location.search).get('palette') || localStorage.getItem('ec-palette'); } catch (e) {}
   if (/^(midnight|sage|ocean)$/.test(pal || '')) d.setAttribute('data-palette', pal);
-  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#f7f2ea'); }
+  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff'); }
 })(document.documentElement);
 </script>
 <link rel="stylesheet" href="style.css">

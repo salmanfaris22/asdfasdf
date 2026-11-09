@@ -21,7 +21,7 @@
     { id: 'sage', name: 'Sage', note: 'Forest green and linen', sw: ['#0f1512', '#a9c79a', '#f3f1ea'] },
     { id: 'ocean', name: 'Ocean', note: 'Deep teal and cloud', sw: ['#0a1317', '#5cc6cc', '#f0f5f6'] },
   ];
-  const METAS = { ember: ['#121110', '#f7f2ea'], midnight: ['#131b37', '#f4f3ef'], sage: ['#0f1512', '#f3f1ea'], ocean: ['#0a1317', '#f0f5f6'] };
+  const METAS = { ember: ['#121110', '#ffffff'], midnight: ['#131b37', '#ffffff'], sage: ['#0f1512', '#ffffff'], ocean: ['#0a1317', '#ffffff'] };
   EC.palette = () => (PALETTES.some((x) => x.id === root.dataset.palette) ? root.dataset.palette : 'ember');
   EC.roomColors = () => { const cs = getComputedStyle(root), v = (k) => cs.getPropertyValue(k).trim(); return { n: v('--room-n'), m: v('--room-m'), sn: v('--scene-n'), sm: v('--scene-m') }; };
   const metaFor = (t) => METAS[EC.palette()][t === 'morning' ? 1 : 0];

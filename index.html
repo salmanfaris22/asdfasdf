@@ -15,7 +15,7 @@
   d.setAttribute('data-theme', t === 'morning' ? 'morning' : 'night');
   var pal; try { pal = new URLSearchParams(location.search).get('palette') || localStorage.getItem('ec-palette'); } catch (e) {}
   if (/^(midnight|sage|ocean)$/.test(pal || '')) d.setAttribute('data-palette', pal);
-  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#f7f2ea'); }
+  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff'); }
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
   var n = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
   if (location.hash && n.type && n.type !== 'navigate') history.replaceState(null, '', location.pathname + location.search);
