@@ -16,6 +16,38 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const CLEAR = 'transform,opacity,visibility,transition';
   const ms = (e) => (parseFloat(e.style.getPropertyValue('--rd')) || 0) / 1000;
+  const EC = window.EC = window.EC || {};
+
+  /* ---------- 0. Smooth scrolling: Lenis (vendor/, MIT), running on GSAP's clock ----------
+     The wheel glides instead of stepping; touch stays native. Anchor links glide too. It waits while the loading screen
+     is up, and leaves the details window and the sideways rows alone (they scroll themselves). */
+  if (window.Lenis && matchMedia('(pointer:fine)').matches) {
+    const lenis = new Lenis({
+      lerp: .085, wheelMultiplier: .95, anchors: { offset: 0, duration: 1.3 },
+      prevent: (node) => !!node.closest?.('dialog, [data-lenis-prevent], .picker-keys, .pp-rail'),
+    });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+    EC.lenis = lenis;
+    if (root.classList.contains('is-loading')) {
+      lenis.stop();
+      new MutationObserver((_, o) => { if (!root.classList.contains('is-loading')) { o.disconnect(); lenis.start(); } })
+        .observe(root, { attributes: true, attributeFilter: ['class'] });
+    }
+    // while a details window is open the page stays put
+    document.querySelectorAll('dialog').forEach((d) => {
+      new MutationObserver(() => (d.open ? lenis.stop() : lenis.start())).observe(d, { attributes: true, attributeFilter: ['open'] });
+    });
+  }
+
+  /* ---------- 0b. Pictures that arrive late fade in instead of popping ---------- */
+  document.querySelectorAll('img[loading="lazy"]:not([data-colour])').forEach((im) => {
+    if (im.complete && im.naturalWidth) return;
+    im.classList.add('img-wait', 'img-fading');
+    const done = () => { im.classList.remove('img-wait'); setTimeout(() => im.classList.remove('img-fading'), 800); };
+    im.addEventListener('load', done, { once: true }); im.addEventListener('error', done, { once: true });
+  });
   // GSAP moves it; a CSS transition on the same property would drag behind every frame
   const still = (els) => gsap.set(els, { transition: 'none' });
 

@@ -39,7 +39,8 @@ function realAssets(small) {
     jacquard: Promise.all([T('tex/jacquard-nor.webp'), T('tex/jacquard-rough.webp')]).then(([normalMap, roughnessMap]) => (normalMap ? { normalMap, roughnessMap } : null)),
     env: new Promise((res) => new HDRLoader().load(assetUrl('env/room-morning.hdr'), res, undefined, () => res(null))),
     viewM: T('env/view-morning.webp', true), viewN: T('env/view-night.webp', true),
-    plantTable: G('potted_plant_02.glb'), plantFloor: G('potted_plant_01.glb'), succulent: G('potted_plant_04.glb'),
+    // the real plants are 3 MB: phones keep the drawn ones
+    plantTable: small ? Promise.resolve(null) : G('potted_plant_02.glb'), plantFloor: small ? Promise.resolve(null) : G('potted_plant_01.glb'), succulent: small ? Promise.resolve(null) : G('potted_plant_04.glb'),
   };
   return REAL;
 }
@@ -688,7 +689,7 @@ async function mount(canvas, init) {
   try {
     renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   } catch (e) { init.onFail?.(e); return null; }
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, small ? 1.75 : 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));   // sharp enough with antialiasing, and far lighter to fill than 2x
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1;
   renderer.shadowMap.enabled = true;

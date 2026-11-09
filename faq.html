@@ -17,10 +17,13 @@
   if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff'); }
 })(document.documentElement);
 </script>
+<link rel="preload" href="fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Which feel is right for me?", "acceptedAnswer": {"@type": "Answer", "text": "Hard: Imperio, Hybrid Plush, Hybrid Eco and Vento. Medium: Prime Aura and Emma French Top. Soft: the two Camellia memory foam mattresses, and their comfort level can be adjusted to what you need."}}, {"@type": "Question", "name": "Can you make a mattress in my size?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every mattress comes in all standard sizes, and we make tailor-made sizes too. Send us the width and length when you ask about a mattress."}}, {"@type": "Question", "name": "What does the guarantee cover?", "acceptedAnswer": {"@type": "Answer", "text": "The foam core, against manufacturing defects and sagging. 10 years on both Camellias, the Prime Aura, Emma French Top and Imperio, 7 years on the Hybrid Plush, and 5 years on the Hybrid Eco and Vento."}}, {"@type": "Question", "name": "What does kg/m³ mean?", "acceptedAnswer": {"@type": "Answer", "text": "It is the density of a foam: how much one cubic metre of it weighs. Our comfort foams run from 22 to 35 kg/m³, the memory foam is 35, and the rebond support layer is 80."}}, {"@type": "Question", "name": "Which covers come off?", "acceptedAnswer": {"@type": "Answer", "text": "The Hybrid Eco and Vento have removable polyester covers. The others are wrapped in knitted jacquard ticking from Italy or Belgium, or Belgian Tencel on the Camellia Euro Top."}}, {"@type": "Question", "name": "Which mattress is the Signature?", "acceptedAnswer": {"@type": "Answer", "text": "The Prime Aura: 7″ and medium, with layers of 22, 25 and 30 kg/m³ density. Its specially developed 3-zone structure withstands body pressure and weight, to promote proper spinal alignment."}}, {"@type": "Question", "name": "Which is the thickest, and which the thinnest?", "acceptedAnswer": {"@type": "Answer", "text": "The Camellia Euro Top comes up to 12″. The Hybrid Eco is 4″, and the Hybrid Plush 4.5″."}}, {"@type": "Question", "name": "Can I see what is inside before I buy?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. In the 3D showroom you can turn each mattress, press it, and unveil its layers in order, with their densities."}}, {"@type": "Question", "name": "Which thicknesses can I choose?", "acceptedAnswer": {"@type": "Answer", "text": "Camellia Euro Top: 8″, 10″ and 12″. Camellia Pillow Top: 8″ and 10″. Prime Aura: 7″. Emma French Top: 6″ and 8″. Imperio: 6″, 8″ and 10″. Hybrid Plush: 4.5″. Hybrid Eco: 4″. Vento: 5″."}}, {"@type": "Question", "name": "What sizes do the pillows come in?", "acceptedAnswer": {"@type": "Answer", "text": "King, 30″ × 20″. Queen, 18″ × 27″. Standard, 16″ × 24″."}}, {"@type": "Question", "name": "What is rebond?", "acceptedAnswer": {"@type": "Answer", "text": "A support layer of foam chips bonded together, at 80 kg/m³ density. It is in the core of both Camellias, the Imperio, the Hybrid Plush and the Vento."}}, {"@type": "Question", "name": "Which mattresses have memory foam?", "acceptedAnswer": {"@type": "Answer", "text": "Both Camellias. The Euro Top and the Pillow Top each have a memory foam layer of 35 kg/m³ density."}}, {"@type": "Question", "name": "What is a profile layer?", "acceptedAnswer": {"@type": "Answer", "text": "A foam layer with a cut, shaped surface. On the Imperio it is 25 kg/m³ and sits on top, for back support and air flow. The Hybrid Plush has a profile cut foam layer on top too."}}, {"@type": "Question", "name": "What are the covers made of?", "acceptedAnswer": {"@type": "Answer", "text": "Camellia Euro Top: Belgian Tencel, made from eucalyptus yarns, at 300 GSM. Camellia Pillow Top, Prime Aura and Emma French Top: Belgian knitted jacquard. Imperio: knitted jacquard made with Italian technology, in white or blue. Hybrid Plush: Italian knitted jacquard. Hybrid Eco and Vento: removable polyester. Pillows: Turkish knitted jacquard."}}, {"@type": "Question", "name": "How do I order?", "acceptedAnswer": {"@type": "Answer", "text": "Open a mattress's details on the range, choose the thickness and size, and email us from there, or call a dealer. No payment yet: we reply to confirm the price and a delivery date."}}, {"@type": "Question", "name": "How much does a mattress cost?", "acceptedAnswer": {"@type": "Answer", "text": "The Hybrid Eco is Rs. 18,000 and the Hybrid Plush Rs. 23,000. The Camellia Euro Top and the Imperio start from Rs. 18,900, the Emma French Top from Rs. 25,500, and the Camellia Pillow Top from Rs. 40,600. Prices for the Prime Aura, the Vento and the pillows are to be confirmed."}}, {"@type": "Question", "name": "Where can I buy one?", "acceptedAnswer": {"@type": "Answer", "text": "From our seven dealers across Sri Lanka, or at our head office in Biyagama. See where to buy."}}]}</script>
 </head>
-<body>
+<body id="top">
 <a class="skip" href="#main">Skip to the content</a>
 
 <header class="nav" id="nav">
@@ -161,7 +164,7 @@
   <div class="foot-bar">
     <p>Sri Lanka's Rising Sleep Brand</p>
     <p>© 2026 Easy Comfort Sleep Solutions. All Rights Reserved</p>
-    <a href="#">Back to top</a>
+    <a href="#top">Back to top</a>
   </div>
   <p class="foot-word" aria-hidden="true">easy comfort</p>
 </footer>
@@ -169,6 +172,7 @@
 <script src="site.js"></script>
 <script src="vendor/gsap.min.js"></script>
 <script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
 <script src="motion.js"></script>
 </body>
 </html>

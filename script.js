@@ -180,8 +180,12 @@
     s.onerror = bedFailed;
     s.onload = () => {
       if (!window.EasyComfortBed) { bedFailed(); return; }
-      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); mountBed(); } }, { rootMargin: '120% 0px' });
+      // set the bed up while the page is quiet (the visitor is still at the top), or at once if they head for it first
+      let started = false;
+      const start = () => { if (started) return; started = true; io.disconnect(); mountBed(); };
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) start(); }, { rootMargin: '120% 0px' });
       io.observe(stage);
+      (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(start, { timeout: 4000 });
     };
     document.body.append(s);
   }

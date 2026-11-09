@@ -17,9 +17,12 @@
   if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff'); }
 })(document.documentElement);
 </script>
+<link rel="preload" href="fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body id="top">
 <a class="skip" href="#main">Skip to the content</a>
 
 <header class="nav" id="nav">
@@ -186,7 +189,7 @@
   <div class="foot-bar">
     <p>Sri Lanka's Rising Sleep Brand</p>
     <p>© 2026 Easy Comfort Sleep Solutions. All Rights Reserved</p>
-    <a href="#">Back to top</a>
+    <a href="#top">Back to top</a>
   </div>
   <p class="foot-word" aria-hidden="true">easy comfort</p>
 </footer>
@@ -194,6 +197,7 @@
 <script src="site.js"></script>
 <script src="vendor/gsap.min.js"></script>
 <script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
 <script src="motion.js"></script>
 </body>
 </html>

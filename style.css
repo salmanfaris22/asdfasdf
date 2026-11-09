@@ -1383,3 +1383,12 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
 .has-gsap .inside-photo img{transition:scale 1s var(--ease)}
 .has-gsap .inside-card:hover .inside-photo img{scale:1.05}
 .foot-word .ch{display:inline-block}
+
+/* Lenis smooth scrolling (motion.js) */
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+/* late pictures fade in */
+img.img-wait{opacity:0!important}
+img.img-fading{transition:opacity .7s var(--ease)!important}   /* only while it fades in; its own transitions come back after */
