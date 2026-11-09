@@ -1,4 +1,4 @@
-/* Easy Comfort: one mattress, on its own page (mattress.html?m=<id>).
+/* Easy Comfort Sleep Solutions: one mattress, on its own page (mattress.html?m=<id>).
    The 3D bedroom makes the bed layer by layer (the unveil), then hands it to the visitor: drag to turn it, press it,
    look inside, change the thickness or the cover. Below: who it is made for, how it feels, what is inside, its story,
    the details from the product sheet, and an email to ask about it in your size.
@@ -27,7 +27,7 @@
   const pick = { thick: P.thick.includes(qt) ? qt : P.thick[0], colour: P.colours.includes(qc) ? qc : (P.colours[0] || null), size: 'Queen' };
 
   /* ---------- The words ---------- */
-  document.title = `${P.name}: ${P.tagline} | Easy Comfort`;
+  document.title = `${P.name}: ${P.tagline} | Easy Comfort Sleep Solutions`;
   document.querySelector('meta[name="description"]')?.setAttribute('content', `${P.name}, ${P.feel.toLowerCase()}, ${span(P.thick)}. ${P.line}`);
   root.dataset.model = id;
 
@@ -76,8 +76,8 @@
   const ld = document.createElement('script');
   ld.type = 'application/ld+json';
   ld.textContent = JSON.stringify({
-    '@context': 'https://schema.org', '@type': 'Product', name: `Easy Comfort ${P.name}`, description: P.line,
-    brand: { '@type': 'Brand', name: 'Easy Comfort' }, image: P.photos.map((p) => new URL(p.src, location.href).href),
+    '@context': 'https://schema.org', '@type': 'Product', name: `Easy Comfort Sleep Solutions ${P.name}`, description: P.line,
+    brand: { '@type': 'Brand', name: 'Easy Comfort Sleep Solutions' }, image: P.photos.map((p) => new URL(p.src, location.href).href),
     additionalProperty: [{ '@type': 'PropertyValue', name: 'Feel', value: P.feel }, { '@type': 'PropertyValue', name: 'Thickness', value: P.thick.map(inch).join(', ') }],
   });
   document.head.append(ld);
@@ -126,7 +126,7 @@
       `Listed price: ${P.tbc ? 'to be confirmed' : plain(P.price)}`,
       '', 'Please reply with the price for this size and a delivery date.',
     ].filter((x) => x !== null && x !== undefined && x !== false);
-    $('paMail').href = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(`Easy Comfort: ${P.name}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    $('paMail').href = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(`Easy Comfort Sleep Solutions: ${P.name}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
   }
   renderInside(); mailLink();
 

@@ -1,4 +1,4 @@
-/* Easy Comfort bed: the real-time 3D showroom.
+/* Easy Comfort Sleep Solutions bed: the real-time 3D showroom.
    Source for ../bed3d.js. Every fabric, print and foam texture is drawn here in code,
    because browsers refuse image files as WebGL textures on file:// pages. Served over http(s), the rooms then put on
    real materials: photo-scanned wood, plaster, wool and linen, a real bedroom's light, real views and real plants
@@ -1528,9 +1528,11 @@ async function mount(canvas, init) {
     ink.strokeStyle = fg; ink.globalAlpha = .5; ink.lineWidth = 3; ink.setLineDash([12, 8]);
     rrect(ink, 22, 22, LW - 44, LH - 44, 9); ink.stroke(); ink.setLineDash([]); ink.globalAlpha = 1;
     ink.fillStyle = fg; ink.textAlign = 'center'; ink.textBaseline = 'middle';
-    ink.font = '600 30px "Hanken Grotesk", system-ui, sans-serif';
-    const word = 'EASY COMFORT', gap = 7;
-    const wTotal = [...word].reduce((s, ch) => s + ink.measureText(ch).width + gap, -gap);
+    const word = 'EASY COMFORT SLEEP SOLUTIONS';
+    let fz = 30, gap = 7;
+    const span_ = () => { ink.font = `600 ${fz}px "Hanken Grotesk", system-ui, sans-serif`; return [...word].reduce((s, ch) => s + ink.measureText(ch).width + gap, -gap); };
+    let wTotal = span_();
+    if (wTotal > LW - 90) { const k = (LW - 90) / wTotal; fz *= k; gap *= k; wTotal = span_(); }   // the full name, spaced out, inside the stitching
     let x = LW / 2 - wTotal / 2;
     ink.textAlign = 'left';
     for (const ch of word) { ink.fillText(ch, x, 80); x += ink.measureText(ch).width + gap; }

@@ -1,4 +1,4 @@
-/* Easy Comfort: the eight mattresses, in one place.
+/* Easy Comfort Sleep Solutions: the eight mattresses, in one place.
    The home page (script.js) and each mattress's own page (mattress.html, product.js) read this.
    MODELS: the layers inside each mattress, for the 3D bed. PRODUCTS: the words, prices and photos for its page.
    Facts come from the product sheet (Mattress Writeups, 05.09.2026); prices and card lines from the range on index.html,
@@ -87,7 +87,7 @@
           "src": "images/camellia-euro-top.webp",
           "w": 676,
           "h": 193,
-          "alt": "Easy Comfort Camellia Euro Top mattress in a white Tencel cover",
+          "alt": "Easy Comfort Sleep Solutions Camellia Euro Top mattress in a white Tencel cover",
           "colour": null
         }
       ],
@@ -170,7 +170,7 @@
           "src": "images/camellia-pillow-top.webp",
           "w": 555,
           "h": 207,
-          "alt": "Easy Comfort Camellia Pillow Top mattress in white, with a quilted pillow top",
+          "alt": "Easy Comfort Sleep Solutions Camellia Pillow Top mattress in white, with a quilted pillow top",
           "colour": null
         }
       ],
@@ -252,7 +252,7 @@
           "src": "images/prime-aura.webp",
           "w": 688,
           "h": 308,
-          "alt": "Easy Comfort Prime Aura mattress in a white jacquard cover with grey flowers",
+          "alt": "Easy Comfort Sleep Solutions Prime Aura mattress in a white jacquard cover with grey flowers",
           "colour": null
         }
       ],
@@ -335,7 +335,7 @@
           "src": "images/emma-french-top.webp",
           "w": 896,
           "h": 297,
-          "alt": "Easy Comfort Emma French Top mattress in a pale green cover with grey palm leaves",
+          "alt": "Easy Comfort Sleep Solutions Emma French Top mattress in a pale green cover with grey palm leaves",
           "colour": null
         }
       ],
@@ -422,14 +422,14 @@
           "src": "images/imperio-white.webp",
           "w": 584,
           "h": 183,
-          "alt": "Easy Comfort Imperio mattress in white, with a grey geometric border",
+          "alt": "Easy Comfort Sleep Solutions Imperio mattress in white, with a grey geometric border",
           "colour": "White"
         },
         {
           "src": "images/imperio-blue.webp",
           "w": 590,
           "h": 167,
-          "alt": "Easy Comfort Imperio mattress in blue, with a geometric pattern",
+          "alt": "Easy Comfort Sleep Solutions Imperio mattress in blue, with a geometric pattern",
           "colour": "Blue"
         }
       ],
@@ -515,7 +515,7 @@
           "src": "images/hybrid-plush.webp",
           "w": 482,
           "h": 140,
-          "alt": "Easy Comfort Hybrid Plush mattress in a blue jacquard cover with a leaf pattern",
+          "alt": "Easy Comfort Sleep Solutions Hybrid Plush mattress in a blue jacquard cover with a leaf pattern",
           "colour": null
         }
       ],
@@ -597,7 +597,7 @@
           "src": "images/hybrid-eco.webp",
           "w": 785,
           "h": 178,
-          "alt": "Easy Comfort Hybrid Eco mattress in a blue patterned cover",
+          "alt": "Easy Comfort Sleep Solutions Hybrid Eco mattress in a blue patterned cover",
           "colour": null
         }
       ],
@@ -679,7 +679,7 @@
           "src": "images/vento.webp",
           "w": 1000,
           "h": 459,
-          "alt": "Easy Comfort Vento mattress in a tropical print cover with toucans and flowers",
+          "alt": "Easy Comfort Sleep Solutions Vento mattress in a tropical print cover with toucans and flowers",
           "colour": null
         }
       ],
