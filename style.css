@@ -1375,3 +1375,11 @@ input:focus-visible+.key-top,.tag:focus-visible{outline:3px solid var(--accent);
   .pp-rail>.card{scroll-snap-align:start}
 }
 @media (prefers-reduced-motion:reduce){.dial-mark{left:calc(var(--pos)*100%)}}
+
+/* ---------- GSAP (motion.js) ----------
+   When it runs, it moves things itself: no CSS transition may trail behind it. Photos it drifts keep a hover zoom on the
+   separate scale property, which adds to its transform instead of fighting it. */
+.has-gsap .split .w>span{transition:none}
+.has-gsap .inside-photo img{transition:scale 1s var(--ease)}
+.has-gsap .inside-card:hover .inside-photo img{scale:1.05}
+.foot-word .ch{display:inline-block}
