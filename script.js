@@ -51,52 +51,8 @@
     }, 250);
   } else { ld.done = true; afterLoad = null; root.classList.remove('is-loading'); loader?.remove(); }
 
-  /* ---------- What is inside each mattress, top to bottom ----------
-     Layers and densities come from the product sheet (Mattress Writeups, 05.09.2026).
-     The sheet gives no thickness per layer, so w is only a drawing weight. */
-  const L = (name, sub, mat, w = 1, zones = false) => ({ name, sub, mat, w, zones });
-  const F22 = L('Foam', '22 kg/m³', 'foam22'), F25 = L('Foam', '25 kg/m³', 'foam25'), F30 = L('Foam', '30 kg/m³', 'foam30');
-  const REBOND = L('Rebond', '80 kg/m³', 'rebond', 1.05), MEMORY = L('Memory foam', '35 kg/m³', 'memory', 1.2);
-  const F2225 = (mat) => L('Foam', '22–25 kg/m³', mat);
-
-  const MODELS = {
-    'camellia-euro-top': {
-      label: 'Camellia', look: 'camellia-et', feel: 'Soft',
-      layers: (t) => (t >= 12 ? [MEMORY, F25, F30, F25, REBOND, F30, F25, F30] : [MEMORY, F25, F30, REBOND, F30, F25]),
-    },
-    'camellia-pillow-top': {
-      label: 'Camellia', look: 'camellia-pt', feel: 'Soft',
-      layers: () => [L('Foam, pillow top', '25 kg/m³', 'foam25', .9), MEMORY, F30, F25, REBOND, F30, F25],
-    },
-    'prime-aura': {
-      label: 'Prime Aura', look: 'aura', feel: 'Medium',
-      layers: () => [F22, L('Foam', '25 kg/m³', 'foam25', 1.1), L('3-zone structure', '30 kg/m³', 'zones', 2.1, true)],
-    },
-    'emma-french-top': {
-      label: 'Emma', look: 'emma', feel: 'Medium',
-      layers: () => [L('Special PU foam', '26 density, breathable', 'pu', 1), L('Foam core', '', 'foam25', 2.4)],
-    },
-    imperio: {
-      label: 'Imperio', look: (c) => (c === 'Blue' ? 'imperio-blue' : 'imperio-white'), feel: 'Hard',
-      layers: (t) => {
-        const top = L('Profile layer', '25 kg/m³', 'profile', 1.15);
-        return t >= 10 ? [top, F25, F25, REBOND, F25, F25, F25] : [top, F25, REBOND, F25, F25];
-      },
-    },
-    'hybrid-plush': {
-      label: 'Hybrid Plush', look: 'plush', feel: 'Hard',
-      layers: () => [L('Profile cut foam', 'top layer', 'profile'), REBOND, L('High density foam', 'bottom layer', 'hd', 1.1)],
-    },
-    'hybrid-eco': {
-      label: 'Hybrid Eco', look: 'eco', feel: 'Hard',
-      layers: () => [L('Foam layer', 'top', 'foam22'), L('Foam layer', 'bottom', 'foam25')],
-    },
-    vento: {
-      label: 'Vento', look: 'vento', feel: 'Hard',
-      layers: () => [F2225('foam22'), F2225('foam25'), REBOND, F2225('foam22')],
-    },
-  };
-  const SWATCH = { foam22: '#f4f2ea', foam25: '#efe7d3', foam30: '#e4d8bb', hd: '#e3eaf1', memory: '#e8bf78', pu: '#e2efe4', profile: '#f3f1e9', rebond: '#a8a294', zones: '#e7dcc0' };
+  /* What is inside each mattress, and how it is drawn: products.js (shared with the mattress pages) */
+  const { MODELS, SWATCH, specFor } = window.ECP;
 
   /* Card facts, read from the page so the words live in one place */
   const cards = [...document.querySelectorAll('.card')];
@@ -106,17 +62,7 @@
   const order = cards.map((c) => c.id).filter((id) => MODELS[id]);
   const photoOf = (id, colour) => cardOf(id).querySelector(`.card-photo img${colour ? `[data-colour="${colour}"]` : ''}`) || cardOf(id).querySelector('.card-photo img');
 
-  function specFor(id, inches, colour) {
-    const m = MODELS[id];
-    const list = m.layers(inches);
-    const inner = inches - (inches <= 5 ? .45 : .7);   // the cover and its quilting take the rest
-    const sum = list.reduce((s, l) => s + l.w, 0);
-    return {
-      key: `${id}@${inches}`, label: m.label, feel: m.feel, inches,
-      look: typeof m.look === 'function' ? m.look(colour) : m.look,
-      layers: list.map((l) => ({ ...l, inches: inner * l.w / sum, mat: l.zones ? 'zones' : l.mat })),
-    };
-  }
+
 
   /* ---------- The 3D showroom ---------- */
   const stage = $('stage'), story = $('top');
@@ -435,17 +381,14 @@
       tg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
       card.querySelectorAll('.card-photo img[data-colour]').forEach((img) => img.classList.toggle('is-shown', img.dataset.colour === col));
       state.colour[card.id] = col;
+      const u = card.querySelector('[data-unveil]'); if (u) u.href = pageOf(card.id, { colour: col });
       if (state.id === card.id) select(card.id, { colour: col });
     });
   });
 
-  /* Unveil from a card: put it on the bed and open it up */
-  const toShowroom = () => $('showroom').scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+  /* Unveil on a card is a link to the mattress's own page (mattress.html, product.js), with the cover chosen here */
+  const pageOf = (id, o = {}) => `mattress.html?m=${id}${o.thick ? `&t=${o.thick}` : ''}${o.colour ? `&c=${encodeURIComponent(o.colour)}` : ''}`;
   cards.forEach((c) => {
-    c.querySelector('[data-unveil]')?.addEventListener('click', () => {
-      select(c.id); toShowroom();
-      setTimeout(() => setOpen(true), calm ? 0 : 450);
-    });
     c.querySelector('.card-open').addEventListener('click', () => openDetail(c.id));
   });
 
@@ -482,7 +425,7 @@
     optKeys($('kThick'), 'dthick', thicks, pick.thick);
     optKeys($('kSize'), 'dsize', pillowSizes.length ? pillowSizes : SIZES, pick.size);
     $('custom').hidden = true;
-    $('dUnveil').hidden = !MODELS[id] || fallbackOn;
+    $('dUnveil').hidden = !MODELS[id];
 
     const i = cards.indexOf(c), prev = cards[(i - 1 + cards.length) % cards.length], next = cards[(i + 1) % cards.length];
     $('dPrev').textContent = `← ${prev.querySelector('h3').textContent}`; $('dPrev').dataset.id = prev.id;
@@ -525,6 +468,7 @@
       `Listed price: ${c.querySelector('.price').textContent}`,
       '', 'Please reply with the price for this size and a delivery date.',
     ].filter((x) => x !== null && x !== undefined && x !== false);
+    if (MODELS[pick.id]) $('dUnveil').href = pageOf(pick.id, { thick: pick.thick && inchesOf(pick.thick), colour: pick.colour });
     $('dMail').href = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(`Easy Comfort: ${name}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
   }
   $('ask').addEventListener('submit', (e) => e.preventDefault());
@@ -540,14 +484,6 @@
   dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
   $('dPrev').addEventListener('click', (e) => openDetail(e.currentTarget.dataset.id));
   $('dNext').addEventListener('click', (e) => openDetail(e.currentTarget.dataset.id));
-  $('dUnveil').addEventListener('click', () => {
-    const opts = {};
-    if (pick.thick) opts.thick = inchesOf(pick.thick);
-    if (pick.colour) opts.colour = pick.colour;
-    dlg.close();
-    select(pick.id, opts); toShowroom();
-    setTimeout(() => setOpen(true), calm ? 0 : 450);
-  });
 
   /* The side panels lean towards the pointer */
   EC.lean?.([...document.querySelectorAll('.wing')].map((el) => ({ el, sx: 3, sy: 1.5 })));

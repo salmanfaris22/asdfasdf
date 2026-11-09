@@ -8,7 +8,7 @@ import {
   Color, Curve, CylinderGeometry, Euler, DataTexture, DirectionalLight, DoubleSide, ExtrudeGeometry, Group, HemisphereLight,
   LatheGeometry, LinearFilter, LinearMipmapLinearFilter, Matrix4, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshPhysicalMaterial,
   MeshStandardMaterial, MirroredRepeatWrapping, PCFShadowMap, PerspectiveCamera, Plane, PlaneGeometry,
-  PMREMGenerator, PointLight, Points, Quaternion, Raycaster, RepeatWrapping, RGBAFormat, Scene, ShaderMaterial, Shape, ShapeGeometry, SpotLight, Sprite, SpriteMaterial,
+  PMREMGenerator, PointLight, Points, Quaternion, ClampToEdgeWrapping, Raycaster, RepeatWrapping, RGBAFormat, Scene, ShaderMaterial, Shape, ShapeGeometry, SpotLight, Sprite, SpriteMaterial,
   SRGBColorSpace, Texture, TextureLoader, TubeGeometry, Vector2, Vector3, Vector4, WebGLRenderer,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -1729,7 +1729,8 @@ async function mount(canvas, init) {
   const V = {};
   function placeCamera() {
     const sway = calm || S.touched ? 0 : Math.sin(S.time * .35) * .07;
-    const show = { az: S.az * (1 - S.lift * .55), pol: S.pol + S.lift * .15, d: S.dist * (1 + S.lift * (S.phone ? -.08 : -.05)), ty: mix(S.ty, Math.max(S.ty, tyOpen()), S.lift), shift: 0, tx: 0 };
+    const fr = (!S.phone && init.frame) || {};   // a page can set the bed off-centre, beside its own words (desktop only)
+    const show = { az: S.az * (1 - S.lift * .55), pol: S.pol + S.lift * .15, d: S.dist * (fr.zoom ?? 1) * (1 + S.lift * (S.phone ? -.08 : -.05)), ty: mix(S.ty, Math.max(S.ty, tyOpen()), S.lift) + (fr.dy ?? 0), shift: 0, tx: fr.tx ?? 0 };
     const story = view(S.st, S.lift), made = view(S.phone ? BUILD.phone : BUILD.desk, 0);
     const w = S.storyW, b = easeIO(S.buildPose);
     for (const k of ['az', 'pol', 'd', 'ty', 'shift', 'tx']) V[k] = mix(mix(show[k], story[k], w), made[k], b);
@@ -1971,7 +1972,7 @@ async function mount(canvas, init) {
     plan = buildPlan(); S.build = 0; S.buildT = plan.end; S.buildPose = 1; S.released = false; S.intro = 1; S.scrollIn = 1;
   } else if (init.intro && !calm) { S.intro = 0; S.scrollIn = 0; S.released = false; }   // held until the loading screen lifts, then the camera eases in
   else { S.intro = 1; S.scrollIn = 1; }
-  if (init.story != null) S.story = init.story;
+  if (init.story != null) S.story = init.story; else S.storyW = 0;   // no scroll story on this page: start framed for the showroom
   fit(); poseMat(); applyDay();
 
   /* Paint the other covers while the page is idle, so changing mattress never stalls a frame */
@@ -2019,6 +2020,14 @@ async function mount(canvas, init) {
     setOpen(open) { S.allOpen = open; wake(); },
     /* the loading screen has lifted: lamps on, and the bed swings from the middle to its place in the hero */
     release() { if (S.released) return; S.released = true; S.build = 1; wake(); },
+    /* Unveil again: the bed is made once more, layer by layer, centred, lamps low; onBuilt fires, then the page calls release() */
+    replay() {
+      S.allOpen = false; mat.hi = null;
+      if (calm) { wake(); return; }
+      mat.open = 0; S.lift = 0; S.azUser = 0; S.polUser = 0; S.vAz = 0;
+      plan = buildPlan(); S.build = 0; S.buildT = plan.end; S.buildPose = 1; S.released = false;
+      applyDay(); wake();
+    },
     /* p: the page's scroll through the story (0–1), or null to hand the bed to the visitor.
        snap jumps straight there (first frame, or reduced motion) instead of easing */
     setStory(p, snap) {
@@ -2096,6 +2105,7 @@ async function mountNight(canvas, init) {
     const t = (x - X0) / L; return t < 1 / 3 ? .72 : t < 2 / 3 ? .3 : .66;
   };
   const SINK = { Soft: .27, Medium: .2, Hard: .14 };
+  const VIEW = { su: .7 * (3.6 / 3.9) * 1290 / 3072, sv: .7, n: [.56, .07], m: [.5, .12] };   // the crop of each 3072 × 1290 panorama that fills the window
   const ctex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new CanvasTexture(c); t.colorSpace = SRGBColorSpace; t.anisotropy = maxAniso; return t; };
   const glowTex = new CanvasTexture(glowCanvas()); glowTex.colorSpace = SRGBColorSpace;
 
@@ -2109,12 +2119,14 @@ async function mountNight(canvas, init) {
     zoneSoft: foamM('#f4f1e7'), zoneFirm: foamM('#cfb98a'),
     oak: new MeshStandardMaterial({ map: oakRail, roughness: .5, color: new Color(1.45, 1.38, 1.3) }),
     plank: new MeshStandardMaterial({ map: oakPlank, roughness: .5, color: new Color(1.1, 1.04, .98) }),
-    pillow: new MeshPhysicalMaterial({ color: '#f4f2ec', roughness: 1, sheen: 1, sheenRoughness: .7, sheenColor: new Color('#ffffff'), normalMap: pore, normalScale: new Vector2(.2, .2) }),
+    pillow: new MeshPhysicalMaterial({ color: '#ebe8e1', roughness: 1, sheen: .35, sheenRoughness: .8, sheenColor: new Color('#ffffff'), normalMap: pore, normalScale: new Vector2(.2, .2) }),
     sheet: new MeshPhysicalMaterial({ color: '#ebe7de', roughness: .92, sheen: .7, sheenRoughness: .6, sheenColor: new Color('#ffffff'), normalMap: duvetNormal, normalScale: new Vector2(.18, .18), side: DoubleSide }),
     duvet: new MeshPhysicalMaterial({ color: '#2d3558', roughness: .96, sheen: .55, sheenRoughness: .55, sheenColor: new Color('#8592c8'), normalMap: duvetNormal, normalScale: new Vector2(.28, .28), side: DoubleSide }),
     skin: new MeshStandardMaterial({ color: '#c79a7d', roughness: .62 }),
     skinDark: new MeshStandardMaterial({ color: '#a97c62', roughness: .7 }),
-    hair: new MeshPhysicalMaterial({ color: '#2a1c12', roughness: .42, sheen: .6, sheenRoughness: .35, sheenColor: new Color('#9a7656') }),
+    hair: new MeshPhysicalMaterial({ color: '#33231a', roughness: .72, sheen: .45, sheenRoughness: .45, sheenColor: new Color('#8a6a52'),
+      normalMap: (() => { const n = 256, a = noise(n, 180, 4, 3), b = noise(n, 70, 3, 9), h = new Float32Array(n * n); for (let i = 0; i < h.length; i++) h[i] = a[i] * .65 + b[i] * .35; return tex(normalsFrom(h, n, 7), n, false); })(),
+      normalScale: new Vector2(.35, .35) }),
     dark: new MeshStandardMaterial({ color: '#241d1a', roughness: .45 }),
     brass: new MeshStandardMaterial({ color: '#b8925a', roughness: .3, metalness: .85 }),
     shade: new MeshStandardMaterial({ color: '#f1e2c6', emissive: new Color('#ffad5c'), emissiveIntensity: 1.3, roughness: .9, side: DoubleSide }),
@@ -2123,13 +2135,25 @@ async function mountNight(canvas, init) {
 
   /* The room: a wall behind the bed with a window, an oak floor; both melt into the page */
   const WALLZ = -W / 2 - 1.15;
-  const wall = new Mesh(new PlaneGeometry(34, 16), new MeshStandardMaterial({ color: '#1b2343', roughness: .95, alphaMap: radialAlpha(512, .26, .5), transparent: true }));
+  // the window, behind the foot of the bed: an opening in the wall, set back in a reveal, with an oak sill
+  const WX0 = .9, WX1 = 4.5, WY0 = 2.4, WY1 = 6.3, ww = WX1 - WX0, wh = WY1 - WY0, wcx = (WX0 + WX1) / 2, wcy = (WY0 + WY1) / 2, REV = .42, GLZ = WALLZ - REV;
+  const wallGeo = (() => {
+    const sh = new Shape(); sh.moveTo(-17, -8); sh.lineTo(17, -8); sh.lineTo(17, 8); sh.lineTo(-17, 8); sh.lineTo(-17, -8);
+    const h = new Shape(); h.moveTo(WX0 - .5, WY0 - 5.6); h.lineTo(WX0 - .5, WY1 - 5.6); h.lineTo(WX1 - .5, WY1 - 5.6); h.lineTo(WX1 - .5, WY0 - 5.6); h.lineTo(WX0 - .5, WY0 - 5.6);
+    sh.holes.push(h);
+    const g = new ShapeGeometry(sh, 4), p = g.attributes.position, uv = g.attributes.uv;
+    for (let i = 0; i < p.count; i++) uv.setXY(i, (p.getX(i) + 17) / 34, (p.getY(i) + 8) / 16);   // the same 0–1 as a plane, for the fade and the plaster
+    return g;
+  })();
+  const wall = new Mesh(wallGeo, new MeshStandardMaterial({ color: '#1b2343', roughness: .95, alphaMap: radialAlpha(512, .26, .5), transparent: true }));
   wall.position.set(.5, 5.6, WALLZ); wall.receiveShadow = true; scene.add(wall);
+  const revealM = new MeshStandardMaterial({ color: '#1b2343', roughness: .95, side: DoubleSide });
+  [[ww, REV, wcx, WY1, -PI / 2, 'x'], [ww, REV, wcx, WY0, PI / 2, 'x'], [REV, wh, WX0, wcy, PI / 2, 'y'], [REV, wh, WX1, wcy, -PI / 2, 'y']].forEach(([a, b, x, y, r, ax]) => {
+    const m = new Mesh(new PlaneGeometry(a, b), revealM); m.position.set(x, y, WALLZ - REV / 2); m.rotation[ax] = r; m.receiveShadow = true; scene.add(m);
+  });
   const floorTex = oakPlank.clone(); floorTex.wrapS = floorTex.wrapT = RepeatWrapping; floorTex.repeat.set(4.5, 34); floorTex.needsUpdate = true;
   const floor = new Mesh(new PlaneGeometry(34, 24), new MeshStandardMaterial({ map: floorTex, color: '#4c3c34', roughness: .42, alphaMap: radialAlpha(512, .2, .5), transparent: true }));
   floor.rotation.x = -PI / 2; floor.position.set(.5, 0, 2.5); floor.receiveShadow = true; scene.add(floor);
-  // the window, behind the foot of the bed
-  const WX0 = .9, WX1 = 4.5, WY0 = 2.4, WY1 = 6.3, ww = WX1 - WX0, wh = WY1 - WY0, wcx = (WX0 + WX1) / 2, wcy = (WY0 + WY1) / 2;
   const nightSky = ctex(256, 280, (g, w, h) => {
     const r = rng(8), sky = g.createLinearGradient(0, 0, 0, h);
     sky.addColorStop(0, '#060a1d'); sky.addColorStop(.55, '#15214b'); sky.addColorStop(1, '#2d4174');
@@ -2157,8 +2181,25 @@ async function mountNight(canvas, init) {
   });
   const skyN = new Mesh(new PlaneGeometry(ww, wh), new MeshBasicMaterial({ map: nightSky, toneMapped: false }));
   const skyD = new Mesh(new PlaneGeometry(ww, wh), new MeshBasicMaterial({ map: daySky, toneMapped: false, transparent: true, opacity: 0, depthWrite: false }));
-  skyN.position.set(wcx, wcy, WALLZ + .01); skyD.position.set(wcx, wcy, WALLZ + .015); skyD.renderOrder = 1; scene.add(skyN, skyD);
-  const bar = (w, h, x, y, d = .12) => { const m = new Mesh(new BoxGeometry(w, h, d), M.frame); m.position.set(x, y, WALLZ + d / 2 + .02); m.receiveShadow = true; scene.add(m); };
+  skyN.position.set(wcx, wcy, GLZ + .01); skyD.position.set(wcx, wcy, GLZ + .015); skyD.renderOrder = 1; scene.add(skyN, skyD);
+  // with the real night photo: a moon, its halo and a few stars over it (the drawn sky has its own)
+  const moonDisc = new Mesh(new CircleGeometry(.15, 32), new MeshBasicMaterial({ color: '#f4f1e4', toneMapped: false, transparent: true }));
+  moonDisc.position.set(WX0 + ww * .7, WY1 - wh * .2, GLZ + .02); moonDisc.visible = false; moonDisc.renderOrder = 2; scene.add(moonDisc);
+  const moonHalo = new Sprite(new SpriteMaterial({ map: glowTex, color: '#b8c6ff', transparent: true, opacity: .4, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
+  moonHalo.scale.set(1.5, 1.5, 1); moonHalo.position.copy(moonDisc.position); moonHalo.visible = false; moonHalo.renderOrder = 2; scene.add(moonHalo);
+  const starTex = ctex(256, 280, (g, w, h) => { const r = rng(31); for (let i = 0; i < 70; i++) { g.fillStyle = `rgba(235,240,255,${(.2 + r() * .6).toFixed(2)})`; const z = r() < .1 ? 1.8 : 1.1; g.fillRect(r() * w, r() * h * .5, z, z); } });
+  const stars = new Mesh(new PlaneGeometry(ww, wh), new MeshBasicMaterial({ map: starTex, transparent: true, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
+  stars.position.set(wcx, wcy, GLZ + .018); stars.visible = false; stars.renderOrder = 2; scene.add(stars);
+  // a faint reflection on the glass
+  const glassTex = ctex(128, 128, (g, w, h) => {
+    const gr = g.createLinearGradient(0, h, w, 0); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.42, 'rgba(255,255,255,0)'); gr.addColorStop(.5, 'rgba(255,255,255,.55)'); gr.addColorStop(.56, 'rgba(255,255,255,.1)'); gr.addColorStop(.64, 'rgba(255,255,255,.3)'); gr.addColorStop(.7, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  });
+  const glass = new Mesh(new PlaneGeometry(ww, wh), new MeshBasicMaterial({ map: glassTex, color: '#c9d4ff', transparent: true, opacity: .07, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
+  glass.position.set(wcx, wcy, GLZ + .1); glass.renderOrder = 3; scene.add(glass);
+  // the sill, proud of the wall
+  const sill = new Mesh(softBox(ww + .5, .1, REV + .24, .02, { seg: [1, 1, 1] }).geometry, M.plank); sill.position.set(wcx, WY0 - .05, WALLZ - REV / 2 + .12); sill.castShadow = sill.receiveShadow = true; scene.add(sill);
+  const bar = (w, h, x, y, d = .12) => { const m = new Mesh(new BoxGeometry(w, h, d), M.frame); m.position.set(x, y, GLZ + d / 2 + .02); m.castShadow = true; m.receiveShadow = true; scene.add(m); };
   const FT = .13;
   bar(ww + FT * 2, FT, wcx, WY1 + FT / 2); bar(ww + FT * 2, FT, wcx, WY0 - FT / 2); bar(FT, wh, WX0 - FT / 2, wcy); bar(FT, wh, WX1 + FT / 2, wcy);
   bar(.06, wh, wcx, wcy, .08); bar(ww, .05, wcx, WY0 + wh * .55, .08);
@@ -2204,15 +2245,33 @@ async function mountNight(canvas, init) {
   const dust = new Points(dustGeo, dustMat); dust.renderOrder = 5; dust.frustumCulled = false; scene.add(dust);
 
   /* Bedside table at the head, with a lamp that goes out at 11:40 and a clock that reads the time */
-  const side = new Group(); side.position.set(X0 - 1.2, 0, -.55); scene.add(side);
+  const side = new Group(); side.position.set(X0 - 1.3, 0, -.6); scene.add(side);
   const sAdd = (geo, m, x, y, z) => { const o = new Mesh(geo, m); o.position.set(x, y, z); o.castShadow = true; o.receiveShadow = true; side.add(o); return o; };
-  sAdd(new CylinderGeometry(.66, .66, .06, 40), M.dark, 0, 1.62, 0);
-  [0, 2.09, 4.19].forEach((a) => { const l = sAdd(new CylinderGeometry(.04, .028, 1.6, 8), M.dark, Math.cos(a) * .4, .8, Math.sin(a) * .4); l.rotation.set(Math.sin(a) * .1, 0, -Math.cos(a) * .1); });
-  sAdd(new LatheGeometry([[0, 0], [.18, 0], [.2, .03], [.18, .06], [.06, .1], [.04, .5], [0, .5]].map(([a, b]) => new Vector2(a, b)), 24), M.brass, -.12, 1.65, -.1);
-  const shade = sAdd(new CylinderGeometry(.22, .31, .38, 32, 1, true), M.shade, -.12, 2.33, -.1); shade.castShadow = false;
+  const TOP = 1.86, CW = 1.5, CD = 1.2, LEG = .34;
+  sAdd(softBox(CW, TOP - LEG - .06, CD, .03, { seg: [2, 2, 2], tile: [[1.2, .8], [1, .8], [1.2, .8]] }).geometry, M.oak, 0, LEG + (TOP - LEG - .06) / 2, 0);
+  sAdd(softBox(CW + .08, .07, CD + .08, .025, { seg: [2, 1, 2] }).geometry, M.plank, 0, TOP - .035, 0);
+  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => sAdd(new CylinderGeometry(.05, .032, LEG, 10), M.oak, a * (CW / 2 - .1), LEG / 2, b * (CD / 2 - .1)));
+  const brassPull = new CylinderGeometry(.018, .018, .32, 10); brassPull.rotateZ(PI / 2);
+  [TOP - .42, TOP - 1.03].forEach((y) => {   // two drawers, each a panel standing just proud, with a brass pull
+    sAdd(softBox(CW - .12, .52, .04, .012, { seg: [1, 1, 1] }).geometry, M.plank, 0, y, CD / 2 + .02);
+    sAdd(brassPull, M.brass, 0, y + .08, CD / 2 + .07);
+  });
+  // the lamp: a glazed ceramic base and a linen drum shade
+  const lampX = -.32, lampZ = -.2;
+  sAdd(new LatheGeometry([[0, 0], [.16, 0], [.17, .02], [.2, .14], [.22, .3], [.19, .44], [.1, .52], [.05, .56], [.05, .66], [0, .66]].map(([a, b]) => new Vector2(a, b)), 32),
+    new MeshPhysicalMaterial({ color: '#d8cdbd', roughness: .32, clearcoat: .6, clearcoatRoughness: .3 }), lampX, TOP, lampZ);
+  const shade = sAdd(new CylinderGeometry(.36, .38, .44, 40, 1, true), M.shade, lampX, TOP + .86, lampZ); shade.castShadow = false;
+  sAdd(new CylinderGeometry(.012, .012, .3, 6), M.brass, lampX, TOP + .74, lampZ).castShadow = false;
   const glowA = new Sprite(new SpriteMaterial({ map: glowTex, color: '#ffb468', transparent: true, opacity: .45, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
-  glowA.scale.set(2.6, 2.6, 1); glowA.position.set(-.12, 2.33, -.1); side.add(glowA);
-  const lamp = new PointLight('#ffb06a', 8, 9, 1.8); lamp.position.set(-.12, 2.4, -.1); side.add(lamp);
+  glowA.scale.set(2.8, 2.8, 1); glowA.position.set(lampX, TOP + .86, lampZ); side.add(glowA);
+  const lamp = new PointLight('#ffb06a', 8, 9, 1.8); lamp.position.set(lampX, TOP + .8, lampZ); side.add(lamp);
+  // two books and a glass of water
+  [['#6b4b3a', .62, .07, .46, .02], ['#2f4656', .56, .06, .42, -.12]].forEach(([c, w, h, d, r], i) => {
+    const b = sAdd(softBox(w, h, d, .008, { seg: [1, 1, 1] }).geometry, new MeshStandardMaterial({ color: c, roughness: .7 }), .3, TOP + h / 2 + i * .07, -.28); b.rotation.y = r;
+    const pg = sAdd(new BoxGeometry(w - .03, h * .7, d - .02), new MeshStandardMaterial({ color: '#efe8da', roughness: .9 }), .3 + .012, TOP + h / 2 + i * .07, -.28); pg.rotation.y = r;
+  });
+  sAdd(new CylinderGeometry(.075, .066, .27, 24, 1, true), new MeshPhysicalMaterial({ color: '#dfe8f2', roughness: .06, transparent: true, opacity: .28, side: DoubleSide }), -.02, TOP + .135, .4).castShadow = false;
+  sAdd(new CylinderGeometry(.069, .062, .18, 24), new MeshPhysicalMaterial({ color: '#b9cfe6', roughness: .05, transparent: true, opacity: .35 }), -.02, TOP + .09, .4).castShadow = false;
   const clockC = document.createElement('canvas'); clockC.width = 256; clockC.height = 112;
   const clockT = new CanvasTexture(clockC); clockT.colorSpace = SRGBColorSpace;
   let clockWas = '';
@@ -2223,7 +2282,7 @@ async function mountNight(canvas, init) {
     g.shadowColor = '#ff6a2a'; g.shadowBlur = 14; g.fillStyle = '#ff8152'; g.fillText(txt, 128, 60); clockT.needsUpdate = true;
   };
   setClock('11:34');
-  const clock = new Group(); clock.position.set(.3, 1.65, .28); clock.rotation.y = .35; side.add(clock);
+  const clock = new Group(); clock.position.set(.38, TOP, .3); clock.rotation.y = .35; side.add(clock);
   const cb = new Mesh(softBox(.5, .24, .17, .025, { seg: [1, 1, 1] }).geometry, new MeshStandardMaterial({ color: '#1a1c23', roughness: .4 })); cb.position.y = .12; cb.castShadow = true; clock.add(cb);
   const cf = new Mesh(new PlaneGeometry(.42, .18), new MeshBasicMaterial({ map: clockT, toneMapped: false })); cf.position.set(0, .12, .087); clock.add(cf);
   const glowC = new Sprite(new SpriteMaterial({ map: glowTex, color: '#ff7a45', transparent: true, opacity: .25, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
@@ -2249,6 +2308,28 @@ async function mountNight(canvas, init) {
     g.fillStyle = r; g.fillRect(0, 0, 128, 128);
     floorShadow = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ map: new CanvasTexture(c), transparent: true, depthWrite: false }));
     floorShadow.rotation.x = -PI / 2; floorShadow.position.set(0, .012, 0); floorShadow.scale.set(L + 3, W + 2.2, 1); scene.add(floorShadow);
+  }
+
+  const rugM = new MeshStandardMaterial({ color: '#2f3040', roughness: 1, normalMap: pore, normalScale: new Vector2(.6, .6) });
+  const rug = new Mesh(softBox(L + 2.6, .05, W + 2.8, .025, { seg: [1, 1, 1] }).geometry, rugM); rug.position.set(.3, .025, .5); rug.receiveShadow = true; scene.add(rug);
+  {
+    const art = ctex(256, 340, (g, w, h) => {   // soft hills under a low moon, in the room's blues and sand
+      const r = rng(17), bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, '#efe9df'); bg.addColorStop(1, '#e4dccf'); g.fillStyle = bg; g.fillRect(0, 0, w, h);
+      g.fillStyle = 'rgba(214,170,120,.6)'; g.beginPath(); g.arc(w * .64, h * .3, w * .1, 0, PI * 2); g.fill();
+      [['#cfc3b0', .52], ['#a9aeb4', .62], ['#7e8b99', .72], ['#56657a', .84]].forEach(([c, b], i) => {
+        const ph = r() * 6;
+        g.fillStyle = c; g.beginPath(); g.moveTo(0, h);
+        for (let x = 0; x <= w; x += 4) g.lineTo(x, h * b - h * (.07 - i * .01) * (.6 + .4 * Math.sin(x * .018 + ph)) * Math.sin(x / w * PI * (1 + i * .3) + i));
+        g.lineTo(w, h); g.fill();
+      });
+    });
+    const pf = new Group(); pf.position.set(X0 + .2, 4.7, WALLZ + .02); scene.add(pf);
+    const fw = 1.25, fh = 1.65, t = .07, d = .07, wal = new MeshStandardMaterial({ color: '#3a2a20', roughness: .5 });
+    [[fw, t, 0, fh / 2 - t / 2], [fw, t, 0, -fh / 2 + t / 2], [t, fh - 2 * t, -fw / 2 + t / 2, 0], [t, fh - 2 * t, fw / 2 - t / 2, 0]].forEach(([bw, bh, bx, by]) => {
+      const m = new Mesh(new BoxGeometry(bw, bh, d), wal); m.position.set(bx, by, d / 2); m.castShadow = true; pf.add(m);
+    });
+    const mat_ = new Mesh(new PlaneGeometry(fw - 2 * t, fh - 2 * t), new MeshStandardMaterial({ color: '#f6f2ea', roughness: .9 })); mat_.position.z = .012; pf.add(mat_);
+    const pic = new Mesh(new PlaneGeometry((fw - 2 * t) * .72, (fh - 2 * t) * .76), new MeshStandardMaterial({ map: art, roughness: .8 })); pic.position.set(0, .02, .016); pf.add(pic);
   }
 
   /* A layer of the mattress: top, near side and both ends, refilled every frame as it gives */
@@ -2320,17 +2401,20 @@ async function mountNight(canvas, init) {
   }
 
   /* Pillows, the sleeper, the duvet with its sheet turned down */
-  const pg = softBox(2.05, .56, 1.6, .25, { cs: 4, seg: [12, 3, 10], shape: { crown: .1, bulge: .05 } }).geometry;
+  const pg = pillowGeo(1.7, 2.3, .52, -.26, 91, small ? 28 : 40);
   const pillow = new Mesh(pg, M.pillow); pillow.castShadow = true; pillow.receiveShadow = true; scene.add(pillow);
   const pillow2 = new Mesh(pg, M.pillow); pillow2.castShadow = true; pillow2.receiveShadow = true; pillow2.rotation.y = -.06; scene.add(pillow2);
   const PX = X0 + 1.12;
   // the sleeper lies on their side, facing away: the back of the head on the pillow, an ear on top
   const head = new Group(); scene.add(head);
   {
-    const hair = new Mesh(SphereLike(.4), M.hair); hair.scale.set(1.12, .82, 1); head.add(hair);
-    const crown = new Mesh(SphereLike(.26), M.hair); crown.scale.set(1.1, .7, 1); crown.position.set(-.22, .06, -.04); head.add(crown);
-    const ear = new Mesh(SphereLike(.075), M.skinDark); ear.scale.set(1.3, .5, 1); ear.position.set(.06, .31, -.02); head.add(ear);
-    const nape = new Mesh(SphereLike(.2), M.skin); nape.scale.set(1.3, .9, .9); nape.position.set(.34, -.04, -.06); head.add(nape);
+    const skull = new Mesh(SphereLike(.4), M.hair); skull.scale.set(1.1, .8, .96); head.add(skull);
+    const crown = new Mesh(SphereLike(.27), M.hair); crown.scale.set(1.15, .72, 1); crown.position.set(-.24, .05, -.04); head.add(crown);
+    // hair falling behind the head onto the pillow: mostly sunk into it, only a soft rise shows
+    const fall_ = new Mesh(SphereLike(.32), M.hair); fall_.scale.set(1.25, .42, 1.15); fall_.position.set(-.26, -.17, .02); head.add(fall_);
+    const ear = new Mesh(SphereLike(.08), M.skinDark); ear.scale.set(1.25, .45, .95); ear.position.set(.1, .3, .02); ear.rotation.z = -.2; head.add(ear);
+    const nape = new Mesh(SphereLike(.21), M.skin); nape.scale.set(1.35, .85, .9); nape.position.set(.36, -.06, -.04); head.add(nape);
+    const jaw = new Mesh(SphereLike(.2), M.skin); jaw.scale.set(1.1, .8, .7); jaw.position.set(.22, -.12, -.28); head.add(jaw);
     head.traverse((o) => { o.castShadow = true; o.receiveShadow = true; });
   }
   const XD0 = X0 + 1.62, XD1 = L / 2 + .14, NXD = 90, NZD = 30, ZD0 = -W / 2 - .55, ZD1 = W / 2 + .015;
@@ -2339,7 +2423,7 @@ async function mountNight(canvas, init) {
   const EDGE = 5, edgeGeo = new PlaneGeometry(1, 1, NXD, EDGE);   // the rolled hem along the near side
   const hem = new Mesh(edgeGeo, M.duvet); hem.castShadow = true; hem.receiveShadow = true; hem.frustumCulled = false; scene.add(hem);
   const FOLD = 8, foldGeo = new PlaneGeometry(1, 1, FOLD, NZD);   // the sheet, turned down over the top of the duvet
-  const fold = new Mesh(foldGeo, M.sheet); fold.castShadow = true; fold.receiveShadow = true; fold.frustumCulled = false; scene.add(fold);
+  const fold = new Mesh(foldGeo, M.sheet); fold.castShadow = true; fold.receiveShadow = true; fold.frustumCulled = false; fold.visible = false; scene.add(fold);   // read as a board from the side: the duvet alone looks truer
   // the sleeper under the duvet: a side sleeper, shoulder and hip high, the waist between
   const BODY = [[0, .46, .7], [.32, .9, .82], [.8, .8, .8], [1.3, .64, .72], [1.9, .9, .8], [2.55, .74, .74], [3.25, .62, .7], [4.2, .46, .62], [5.0, .4, .55], [5.45, .3, .5], [5.9, .12, .45]];
   const bodyAt = (u, k) => {
@@ -2362,10 +2446,11 @@ async function mountNight(canvas, init) {
     hemiS: pair('#3b4a86', '#eef3ff'), hemiG: pair('#0b0f22', '#e8d6bf'), moon: pair('#a9bcff', '#ffe3bd'), front: pair('#c9d4ff', '#fff6ec'),
     duvet: pair('#2d3558', '#eef1f6'), sheen: pair('#8592c8', '#ffffff'), skin: pair('#c79a7d', '#d8a888'), wall: pair('#1b2343', '#ebe5db'),
     floor: pair('#3a2e29', '#c9b195'), frame: pair('#141824', '#f2eee8'), curtain: pair('#d4d8e8', '#ffffff'), curtainE: pair('#3d4a7a', '#fff0da'),
-    beam: pair('#9fb4ff', '#ffd59c'), dust: pair('#d9e6ff', '#ffe2b0'), sheet: pair('#ebe7de', '#f7f4ee'),
+    beam: pair('#9fb4ff', '#ffd59c'), dust: pair('#d9e6ff', '#ffe2b0'), sheet: pair('#ebe7de', '#f7f4ee'), rug: pair('#2b2c3a', '#d8cbb8'),
+    view: pair('#55629c', '#fff8ee'),
   };
   const setMix = (c, p, t) => c.copy(p[0]).lerp(p[1], t);
-  let day = init.theme === 'morning' ? 1 : 0, dayT = day, lastT = 0, raf = 0, lampOn = 1;
+  let day = init.theme === 'morning' ? 1 : 0, dayT = day, lastT = 0, raf = 0, lampOn = 1, realView = false;
   function applyDay() {
     const d = smooth(0, 1, day), n = 1 - d;
     setMix(hemi.color, DAYN.hemiS, d); setMix(hemi.groundColor, DAYN.hemiG, d); hemi.intensity = mix(.55, 1.15, d);
@@ -2375,6 +2460,9 @@ async function mountNight(canvas, init) {
     setMix(M.duvet.color, DAYN.duvet, d); setMix(M.duvet.sheenColor, DAYN.sheen, d); setMix(M.sheet.color, DAYN.sheet, d);
     setMix(M.skin.color, DAYN.skin, d);
     setMix(wall.material.color, DAYN.wall, d); setMix(floor.material.color, DAYN.floor, d); setMix(M.frame.color, DAYN.frame, d);
+    revealM.color.copy(wall.material.color).multiplyScalar(mix(1.25, .97, d)); setMix(rugM.color, DAYN.rug, d);
+    if (realView) { moonDisc.material.opacity = n; moonHalo.material.opacity = .4 * n; stars.material.opacity = n; }
+    glass.material.opacity = mix(.07, .14, d);
     setMix(curtainM.color, DAYN.curtain, d); setMix(curtainM.emissive, DAYN.curtainE, d); curtainM.opacity = mix(.55, .75, d);
     skyD.material.opacity = d;
     setMix(beam.material.color, DAYN.beam, d); beam.material.opacity = mix(.16, .22, d);
@@ -2464,6 +2552,7 @@ async function mountNight(canvas, init) {
         const chest = Math.exp(-(((u - .75) / .5) ** 2));
         let y = topAt(Math.min(x, L / 2), Math.max(-W / 2, Math.min(W / 2, z))) + .11 + bodyAt(u, 1) * bump * (1 + .05 * holdOn) + Math.sin(breath) * .03 * chest * bump;
         y += .045 * Math.exp(-((u / .14) ** 2));                                         // the folded edge under the chin
+        y -= (1 - smooth(0, .16, u)) * .14 * (1 - bump * .5);                                // its edge rolls down to meet the bed
         y += (.016 * Math.sin(x * 2.1 + z * 1.1 + 1.3) + .007 * Math.sin(x * 5.3 - z * 1.9)) * smooth(.2, 1.2, u) * (1 - bump * .6);  // loose folds
         if (z < -W / 2) y -= (-W / 2 - z) * 1.7;                                          // over the far edge
         if (z > W / 2 - .34) y -= ((z - (W / 2 - .34)) / .36) ** 2 * .1;                 // tucked at the near edge
@@ -2487,7 +2576,8 @@ async function mountNight(canvas, init) {
     for (let r = 0; r <= NZD; r++) {
       for (let c = 0; c <= FOLD; c++) {
         const cx = Math.round(c / FOLD * FW / (XD1 - XD0) * NXD), k = (r * (NXD + 1) + cx) * 3, q = (r * (FOLD + 1) + c) * 3;
-        f[q] = p[k] - .012; f[q + 1] = p[k + 1] + .028 + .02 * Math.sin(c / FOLD * PI); f[q + 2] = p[k + 2];
+        const zz = p[k + 2], on = smooth(W / 2 - .2, W / 2 - .7, zz) * smooth(-W / 2 + .05, -W / 2 + .5, zz);   // over the top only: it slips under at both sides
+        f[q] = p[k] - .012 + .03 * Math.sin(zz * 3.1 + 1); f[q + 1] = p[k + 1] + (.028 + .02 * Math.sin(c / FOLD * PI)) * on - .04 * (1 - on); f[q + 2] = zz;
       }
     }
     foldGeo.attributes.position.needsUpdate = true; foldGeo.computeVertexNormals();
@@ -2514,6 +2604,8 @@ async function mountNight(canvas, init) {
     az = damp(az, azT, 4, dt); el = damp(el, elT, 4, dt);
     if (Math.abs(az - azT) + Math.abs(el - elT) > 1e-4) moving = true;
     dustMat.uniforms.uTime.value = now / 1000;
+    if (skyN.material.map.userData.real) skyN.material.map.offset.x = VIEW.n[0] + az * .1;   // the view shifts a touch as the camera turns
+    if (skyD.material.map.userData.real) skyD.material.map.offset.x = VIEW.m[0] + az * .1;
     placeCam();
     renderer.render(scene, camera);
     report();
@@ -2530,6 +2622,15 @@ async function mountNight(canvas, init) {
     if (R) {
       on(R.oak, (o) => { dress(M.oak, o, .07, 1.1, PI / 2, { color: '#ffffff', rough: .82, ns: .9 }); dress(M.plank, o, 1 / t, 1 / t, PI / 2, { color: '#ffffff', rough: .8, ns: .9 }); });
       on(R.floor, (o) => { const k = 1.7 * 3.937; dress(floor.material, o, 34 / k, 24 / k, 0, { rough: .7, ns: .8 }); });
+      on(R.rug, (o) => { const k = .5 * 3.937; dress(rugM, o, (L + 2.6) / k, (W + 2.8) / k, 0, { keepMap: true, ns: 1 }); });
+      // the real views, cropped to the window: the lake under a night sky (the dusk photo, deepened), and green hills at sunrise
+      const crop = (t, [u0, v0]) => { const c = t.clone(); c.wrapS = c.wrapT = ClampToEdgeWrapping; c.repeat.set(VIEW.su, VIEW.sv); c.offset.set(u0, v0); c.userData.real = true; c.needsUpdate = true; return c; };
+      on(R.viewN, (t) => {
+        skyN.material.map = crop(t, VIEW.n); skyN.material.color.copy(DAYN.view[0]); skyN.material.needsUpdate = true;
+        realView = true; moonDisc.visible = moonHalo.visible = stars.visible = true; applyDay();
+      });
+      on(R.viewM, (t) => { skyD.material.map = crop(t, VIEW.m); skyD.material.color.copy(DAYN.view[1]); skyD.material.needsUpdate = true; });
+      on(R.plantFloor, (m) => { placeModel(m.clone(), scene, WX1 + 1.15, 0, WALLZ + .75, 3.1, .6); });
       on(R.plaster, (o) => { const k = 2 * 3.937; dress(wall.material, o, 34 / k, 16 / k, 0, { keepMap: true, ns: .7 }); });
       on(R.linen, (o) => {
         const k = .27 * 3.937;

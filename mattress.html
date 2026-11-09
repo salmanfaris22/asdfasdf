@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" data-page="mattress">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mattress | Easy Comfort</title>
+<meta name="description" content="See an Easy Comfort mattress made layer by layer in 3D, look inside it, and ask for the price in your size.">
+<meta name="theme-color" content="#121110">
+<meta name="color-scheme" content="dark light">
+<script>
+(function (d) {
+  d.classList.add('js');
+  var t; try { t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('ec-theme'); } catch (e) {}
+  d.setAttribute('data-theme', t === 'morning' ? 'morning' : 'night');
+  var pal; try { pal = new URLSearchParams(location.search).get('palette') || localStorage.getItem('ec-palette'); } catch (e) {}
+  if (/^(midnight|sage|ocean)$/.test(pal || '')) d.setAttribute('data-palette', pal);
+  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#f7f2ea'); }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="Easy Comfort, home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Easy Comfort</span></a>
+  <nav class="nav-links" id="navLinks" aria-label="Main">
+    <span class="nav-pill" aria-hidden="true"></span>
+    <a href="index.html#showroom" data-nav="showroom">3D Showroom</a>
+    <div class="nav-dd">
+      <a href="index.html#range" data-nav="range" aria-current="page">Mattresses</a>
+      <button class="nav-dd-btn" type="button" aria-expanded="false" aria-controls="ddMenu"><span class="sr-only">Show the mattresses</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="nav-dd-menu" id="ddMenu">
+        <a href="mattress.html?m=camellia-euro-top">Camellia Euro Top<small>Soft · 8–12″</small></a>
+        <a href="mattress.html?m=camellia-pillow-top">Camellia Pillow Top<small>Soft · 8–10″</small></a>
+        <a href="mattress.html?m=prime-aura">Prime Aura<small>Medium · 7″</small></a>
+        <a href="mattress.html?m=emma-french-top">Emma French Top<small>Medium · 6–8″</small></a>
+        <a href="mattress.html?m=imperio">Imperio<small>Hard · 6–10″</small></a>
+        <a href="mattress.html?m=hybrid-plush">Hybrid Plush<small>Firm-leaning plush · 4.5″</small></a>
+        <a href="mattress.html?m=hybrid-eco">Hybrid Eco<small>Hard · 4″</small></a>
+        <a href="mattress.html?m=vento">Vento<small>Hard · 5″</small></a>
+        <a href="index.html#pillows" data-model="pillows">Pillows<small>Medium soft · 3 sizes</small></a>
+        <a class="nav-dd-all" href="index.html#range">See the whole range<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+    <a href="services.html" data-nav="services">Services</a>
+    <a href="faq.html" data-nav="faq">FAQ</a>
+    <a href="stores.html" data-nav="stores">Stores</a>
+    <a class="btn nav-cta-m" href="index.html#range">Find your mattress <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </nav>
+  <div class="nav-end">
+    <button class="theme" id="themeBtn" type="button" role="switch" aria-checked="false" title="Switch to morning"><span class="sr-only">Morning light</span><span class="theme-knob" aria-hidden="true"></span></button>
+    <a class="btn nav-cta" href="index.html#range">Find your mattress <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <button class="nav-menu" id="navMenu" type="button" aria-expanded="false" aria-controls="navLinks"><span class="sr-only">Menu</span><i aria-hidden="true"></i></button>
+  </div>
+</header>
+
+<main id="main" class="pp">
+  <section class="pp-stage" id="ppStage" aria-labelledby="ppName">
+    <canvas class="bed-canvas" id="ppBed" aria-label="The mattress in 3D. Drag to turn it, press it to feel how firm it is."></canvas>
+    <img class="pp-fallback" id="ppFallback" alt="" hidden>
+    <div class="pp-making" id="ppMaking" aria-hidden="true"><span>Making your bed</span><i><i id="ppMakingBar"></i></i></div>
+    <div class="pp-head">
+      <a class="pp-back" href="index.html#range"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>The range</a>
+      <div class="pp-title" id="ppTitle">
+        <p class="eyebrow" id="ppKicker"></p>
+        <h1 id="ppName"></h1>
+        <p class="pp-tag" id="ppTag"></p>
+        <p class="pp-line" id="ppLine"></p>
+        <p class="pp-price" id="ppPrice"></p>
+      </div>
+    </div>
+    <form class="pp-controls" id="ppControls">
+      <fieldset id="ppThickSet"><legend>Thickness</legend><div class="opt-keys" id="ppThick"></div></fieldset>
+      <fieldset id="ppColourSet"><legend>Cover</legend><div class="opt-keys" id="ppColour"></div></fieldset>
+      <div class="pp-acts">
+        <button class="btn" id="ppInside" type="button" aria-pressed="false">Look inside</button>
+        <button class="btn btn--glass" id="ppReplay" type="button">Unveil again</button>
+      </div>
+    </form>
+    <p class="pp-hint" id="ppHint">Drag to turn · press the mattress to feel it</p>
+  </section>
+
+  <section class="pp-sec pp-for" aria-labelledby="forTitle">
+    <header class="sec-head"><h2 id="forTitle" data-split>Made for</h2><p data-rv="60" id="forLead"></p></header>
+    <div class="pp-cols" id="ppFor" data-rv-kids="3"></div>
+  </section>
+
+  <section class="pp-sec" aria-labelledby="feelTitle">
+    <div class="pp-two">
+      <div class="pp-panel" data-rv>
+        <h2 id="feelTitle">How it feels</h2>
+        <p class="pp-feel" id="ppFeel"></p>
+        <div class="dial" id="ppDial"><i class="dial-track"></i><i class="dial-mark" id="ppDialMark"></i></div>
+        <p class="dial-ends"><span>Soft</span><span>Medium</span><span>Hard</span></p>
+        <p class="pp-note" id="ppFeelNote"></p>
+      </div>
+      <div class="pp-panel" data-rv="120">
+        <h2>What is inside</h2>
+        <p class="pp-layers" id="ppLayers"></p>
+        <ol class="slabs" id="ppSlabs"></ol>
+        <p class="slabs-note">Top to bottom. Order and densities from the product sheet; the thicknesses are drawn to show the order.</p>
+        <p class="pp-core" id="ppCore"></p>
+        <button class="pp-link" id="ppInside2" type="button">See the layers apart in 3D</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="pp-sec pp-story" aria-labelledby="storyTitle">
+    <div class="pp-story-in">
+      <h2 id="storyTitle" data-split>The story</h2>
+      <div id="ppStory"></div>
+    </div>
+  </section>
+
+  <section class="pp-sec" aria-labelledby="specTitle">
+    <div class="pp-two pp-two--spec">
+      <div data-rv>
+        <h2 id="specTitle">Details</h2>
+        <dl class="spec pp-spec" id="ppSpec"></dl>
+      </div>
+      <div data-rv="120">
+        <h2>At a glance</h2>
+        <ul class="pp-chips" id="ppChips"></ul>
+        <form class="ask" id="ppAsk">
+          <h3>Ask about this one</h3>
+          <fieldset id="paColourSet"><legend>Colour</legend><div class="opt-keys" id="paColour"></div></fieldset>
+          <fieldset id="paThickSet"><legend>Thickness</legend><div class="opt-keys" id="paThick"></div></fieldset>
+          <fieldset><legend>Size</legend><div class="opt-keys" id="paSize"></div>
+            <div class="custom" id="paCustom" hidden>
+              <label>Width, inches<input id="paW" inputmode="decimal" autocomplete="off"></label>
+              <label>Length, inches<input id="paL" inputmode="decimal" autocomplete="off"></label>
+            </div>
+          </fieldset>
+          <div class="ask-actions">
+            <a class="btn" id="paMail" href="#">Email us about this</a>
+            <a class="btn btn--ghost" href="stores.html">Feel it at a dealer</a>
+          </div>
+          <p class="ask-note">No payment now. We will write back with the price for your size and a delivery date.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="pp-sec pp-more" aria-labelledby="moreTitle">
+    <header class="sec-head"><h2 id="moreTitle" data-split>More mattresses</h2><p data-rv="60" id="moreLead"></p></header>
+    <div class="pp-rail" id="ppMore" data-rv-kids="4"></div>
+  </section>
+</main>
+
+<footer class="foot" id="foot">
+  <canvas id="quilt" aria-hidden="true"></canvas>
+  <div class="foot-in">
+    <div class="label label--brand" data-rv>
+      <p class="label-line">Easy Comfort Sleep Solutions</p>
+      <p class="label-tag">Sri Lanka's Rising Sleep Brand</p>
+      <nav aria-label="Footer">
+        <a href="index.html#showroom">3D showroom</a>
+        <a href="index.html#range">The range</a>
+        <a href="services.html">Services</a>
+        <a href="faq.html">Questions</a>
+        <a href="stores.html">Where to buy</a>
+      </nav>
+      <p class="label-small">© 2026 Easy Comfort</p>
+    </div>
+
+
+    <div class="label label--contact" data-rv="120">
+      <div class="label-block">
+        <h2 class="label-h">Get in touch</h2>
+        <a href="mailto:info@easycomfortsleepsolutions.com">info@easycomfortsleepsolutions.com</a>
+        <a href="tel:+94112489634">+94 11 248 9634</a>
+      </div>
+      <div class="label-block">
+        <h2 class="label-h">Visit</h2>
+        <address>No. 306/16, Hospital Road,<br>Biyagama, Sri Lanka</address>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="products.js"></script>
+<script src="product.js"></script>
+<script src="site.js"></script>
+</body>
+</html>
