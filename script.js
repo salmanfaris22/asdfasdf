@@ -244,6 +244,23 @@
     });
   }
 
+  /* The room behind each photo drifts a little against the scroll: --sy runs -1 (card low on screen) to 1 (high) */
+  if (!calm) {
+    let sy = false;
+    const drift = () => {
+      sy = false;
+      const h = innerHeight;
+      for (const c of cards) {
+        if (c.hidden) continue;
+        const r = c.getBoundingClientRect();
+        if (r.bottom < -80 || r.top > h + 80) continue;
+        c.style.setProperty('--sy', Math.max(-1, Math.min(1, (h / 2 - (r.top + r.height / 2)) / h)).toFixed(3));
+      }
+    };
+    addEventListener('scroll', () => { if (!sy) { sy = true; requestAnimationFrame(drift); } }, { passive: true });
+    drift();
+  }
+
   /* Imperio: two covers, one switch */
   document.querySelectorAll('.colour-toggle').forEach((tg) => {
     const card = tg.closest('.card');
