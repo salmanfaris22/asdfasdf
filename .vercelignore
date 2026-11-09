@@ -5,3 +5,6 @@ _backup
 *.md
 !assets3d/CREDITS.md
 .DS_Store
+.env*
+.vercel
+.gitignore
