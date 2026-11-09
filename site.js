@@ -378,7 +378,7 @@
 
     try { await document.fonts.load('400 200px "Bebas Neue"'); } catch (e) { /* falls back to Impact */ }
 
-    const WORD = 'EASY COMFORT';
+    const WORD = 'EASY COMFORT SLEEP SOLUTIONS';
     let W = 0, H = 0, px = 1;
     const light = { x: 0, y: 0, tx: 0, ty: 0 };
     let day = EC.theme() === 'morning' ? 1 : 0, dayT = day;
@@ -390,11 +390,13 @@
       const mark = document.createElement('canvas'); mark.width = W; mark.height = H;
       const g = mark.getContext('2d');
       g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+      // the full name: one line on a wide footer, two stacked on a narrow one
+      const lines = W / px > 760 ? [WORD] : ['EASY COMFORT', 'SLEEP SOLUTIONS'];
       g.font = '400 100px "Bebas Neue", Impact, sans-serif';
-      const fs = Math.min(100 * (W * .9) / g.measureText(WORD).width, H * .4);
+      const fs = Math.min(...lines.map((l) => 100 * (W * .9) / g.measureText(l).width), H * .4 / lines.length);
       g.font = `400 ${fs}px "Bebas Neue", Impact, sans-serif`;
       g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.fillStyle = '#fff';
-      g.fillText(WORD, W / 2, H - H * .075);
+      lines.forEach((l, i) => g.fillText(l, W / 2, H - H * .075 - (lines.length - 1 - i) * fs * .9));
       // Two blurred copies: one bevels the letters, the wider one presses the quilting flat around them.
       // Layered offset draws instead of ctx.filter, because Safari does not support ctx.filter.
       const blurred = (radius, down) => {
