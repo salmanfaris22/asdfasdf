@@ -280,6 +280,12 @@
   const pageOf = (id, o = {}) => `mattress.html?m=${id}${o.thick ? `&t=${o.thick}` : ''}${o.colour ? `&c=${encodeURIComponent(o.colour)}` : ''}`;
   cards.forEach((c) => {
     c.querySelector('.card-open').addEventListener('click', () => openDetail(c.id));
+    // the whole tile opens it: the mattress's page, or the pillows' details (its buttons and the colour switch keep their own clicks)
+    c.addEventListener('click', (e) => {
+      if (e.target.closest('a, button, .colour-toggle')) return;
+      const link = c.querySelector('[data-unveil]');
+      if (link) location.href = link.href; else openDetail(c.id);
+    });
   });
 
   /* ---------- Details window ---------- */
