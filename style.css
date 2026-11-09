@@ -319,8 +319,18 @@ html.is-loading .vhero-in,html.is-loading .vhero-chapters{opacity:0}
 @media (max-width:960px){.inside-grid{grid-template-columns:1fr}}
 
 /* ---------- Second section: the 3D showroom (the stage below is one screen, no longer pinned to a story) ---------- */
-.story.story--show{height:auto}
+.story.story--show{height:auto;padding:clamp(48px,8vh,96px) 0 clamp(20px,4vh,40px);background:var(--bg)}
 .story--show .stage{position:relative}
+/* wide screens: the showroom is a framed screen, 80% of the width, centred, with room either side */
+@media (min-width:861px){
+  .story--show .stage{width:calc(100% - var(--gut)*2);height:min(calc(100svh - 120px),860px);min-height:600px;margin:0 auto;border-radius:clamp(24px,2.4vw,36px);
+    box-shadow:var(--card-shadow-2),inset 0 0 0 1px var(--line)}
+}
+@media (min-width:1101px){   /* 80% wide from here; narrower, the 3D would frame the bed for a phone */
+  .story--show .stage{width:80%}
+  .inside-grid{max-width:none;width:80%}
+  .inside{padding-left:0;padding-right:0}
+}
 
 /* ---------- First section: the scroll story ----------
    One pinned stage and one 3D bedroom. The headline and the three captions are painted on the wall (bed3d.js);
