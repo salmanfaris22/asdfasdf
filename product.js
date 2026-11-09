@@ -1,6 +1,6 @@
 /* Easy Comfort Sleep Solutions: one mattress, on its own page (mattress.html?m=<id>).
    The 3D bedroom makes the bed layer by layer (the unveil), then hands it to the visitor: drag to turn it, press it,
-   look inside, change the thickness or the cover. Below: who it is made for, how it feels, what is inside, its story,
+   unveil its layers, change the thickness or the cover. Below: who it is made for, how it feels, what is inside, its story,
    the details from the product sheet, and an email to ask about it in your size.
    Words and numbers: products.js. Runs before site.js, so the reveals see the filled page. */
 (() => {
@@ -161,7 +161,7 @@
   function setOpen(v) {
     open = v;
     $('ppInside').setAttribute('aria-pressed', String(v));
-    $('ppInside').textContent = v ? 'Close it up' : 'Look inside';
+    $('ppInside').textContent = v ? 'Close it up' : 'Unveil';   // Unveil spreads the layers apart
     $('ppInside2').textContent = v ? 'Close it up' : 'See the layers apart in 3D';
     stage.classList.toggle('is-open', v);
     bed?.setOpen(v);
