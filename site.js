@@ -15,14 +15,8 @@
   /* ---------- Colour palettes ----------
      Four palettes, each with a night and a morning (style.css). The head of each page sets data-palette before anything
      paints; the Colours tab on the left edge lets you try them; the 3D rooms take their wall colours from the palette. */
-  const PALETTES = [
-    { id: 'ember', name: 'Ember', note: 'Warm charcoal, cream, orange', sw: ['#121110', '#ef8f47', '#f7f2ea'] },
-    { id: 'midnight', name: 'Midnight', note: 'Navy and gold', sw: ['#131b37', '#e0b06f', '#f4f3ef'] },
-    { id: 'sage', name: 'Sage', note: 'Forest green and linen', sw: ['#0f1512', '#a9c79a', '#f3f1ea'] },
-    { id: 'ocean', name: 'Ocean', note: 'Deep teal and cloud', sw: ['#0a1317', '#5cc6cc', '#f0f5f6'] },
-  ];
-  const METAS = { ember: ['#121110', '#ffffff'], midnight: ['#131b37', '#ffffff'], sage: ['#0f1512', '#ffffff'], ocean: ['#0a1317', '#ffffff'] };
-  EC.palette = () => (PALETTES.some((x) => x.id === root.dataset.palette) ? root.dataset.palette : 'ember');
+  const METAS = { brand: ['#102f30', '#ffffff'] };
+  EC.palette = () => 'brand';
   EC.roomColors = () => { const cs = getComputedStyle(root), v = (k) => cs.getPropertyValue(k).trim(); return { n: v('--room-n'), m: v('--room-m'), sn: v('--scene-n'), sm: v('--scene-m') }; };
   const metaFor = (t) => METAS[EC.palette()][t === 'morning' ? 1 : 0];
   const META = { get night() { return metaFor('night'); }, get morning() { return metaFor('morning'); } };
@@ -52,30 +46,8 @@
   applyTheme(EC.theme());
   $('themeBtn')?.addEventListener('click', (e) => EC.setTheme(EC.theme() === 'morning' ? 'night' : 'morning', e.currentTarget));
 
-  EC.setPalette = (id) => {
-    if (id === EC.palette() || !METAS[id]) return;
-    const go = () => {
-      if (id === 'ember') delete root.dataset.palette; else root.dataset.palette = id;
-      try { localStorage.setItem('ec-palette', id); } catch (e) { /* private mode */ }
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', metaFor(EC.theme()));
-      pal?.querySelectorAll('[data-pal]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.pal === id)));
-      dispatchEvent(new CustomEvent('ec:palette', { detail: { palette: id } }));
-    };
-    if (document.startViewTransition && !calm) document.startViewTransition(go); else go();
-  };
-  // the Colours tab: try each palette on the real page (your choice is kept on this device)
-  const pal = document.createElement('div');
-  pal.className = 'pal';
-  pal.innerHTML = `<button class="pal-tab" type="button" aria-expanded="false" aria-controls="palList"><span class="pal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Colours</span></button>
-    <div class="pal-list" id="palList" role="radiogroup" aria-label="Colour palette">${PALETTES.map((x) => `<button type="button" role="radio" data-pal="${x.id}" aria-checked="${x.id === EC.palette()}">
-      <span class="pal-sw" aria-hidden="true">${x.sw.map((c) => `<i style="background:${c}"></i>`).join('')}</span><span class="pal-t"><b>${x.name}</b><small>${x.note}</small></span></button>`).join('')}</div>`;
-  document.body.append(pal);
-  const palTab = pal.querySelector('.pal-tab');
-  palTab.addEventListener('click', () => { const open = !pal.classList.contains('is-open'); pal.classList.toggle('is-open', open); palTab.setAttribute('aria-expanded', String(open)); });
-  pal.querySelectorAll('[data-pal]').forEach((b) => b.addEventListener('click', () => EC.setPalette(b.dataset.pal)));
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && pal.classList.contains('is-open')) { pal.classList.remove('is-open'); palTab.setAttribute('aria-expanded', 'false'); palTab.focus(); } });
-  document.addEventListener('click', (e) => { if (!pal.contains(e.target)) { pal.classList.remove('is-open'); palTab.setAttribute('aria-expanded', 'false'); } });
-
+  // The supplied logo defines the single brand palette.
+  EC.setPalette = () => {};
   /* ---------- Nav ---------- */
   const nav = $('nav');
   if (nav) {

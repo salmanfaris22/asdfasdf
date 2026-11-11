@@ -5,28 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mattress | Easy Comfort Sleep Solutions</title>
 <meta name="description" content="See an Easy Comfort Sleep Solutions mattress made layer by layer in 3D, look inside it, and ask for the price in your size.">
-<meta name="theme-color" content="#121110">
+<meta name="theme-color" content="#ffffff">
 <meta name="color-scheme" content="dark light">
 <script>
 (function (d) {
   d.classList.add('js');
   var t; try { t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('ec-theme'); } catch (e) {}
-  d.setAttribute('data-theme', t === 'morning' ? 'morning' : 'night');
-  var pal; try { pal = new URLSearchParams(location.search).get('palette') || localStorage.getItem('ec-palette'); } catch (e) {}
-  if (/^(midnight|sage|ocean)$/.test(pal || '')) d.setAttribute('data-palette', pal);
+  d.setAttribute('data-theme', t === 'night' ? 'night' : 'morning');
+  d.setAttribute('data-palette', 'brand');
   if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff'); }
 })(document.documentElement);
 </script>
 <link rel="preload" href="fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="images/easy-comfort-logo.jpeg" type="image/jpeg">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="brand.css">
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to the content</a>
 
 <header class="nav" id="nav">
-  <a class="brand" href="index.html" aria-label="Easy Comfort Sleep Solutions, home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-name">Easy Comfort <small>Sleep Solutions</small></span></a>
+  <a class="brand" href="index.html" aria-label="Easy Comfort Sleep Solutions, home"><span class="brand-logo"><img src="images/easy-comfort-logo-transparent.webp" width="2048" height="768" alt="Easy Comfort — For a Sensational Sleep"></span></a>
   <nav class="nav-links" id="navLinks" aria-label="Main">
     <span class="nav-pill" aria-hidden="true"></span>
     <a href="index.html#showroom" data-nav="showroom">3D Showroom</a>
@@ -190,5 +190,6 @@
 <script src="vendor/ScrollTrigger.min.js"></script>
 <script src="vendor/lenis.min.js"></script>
 <script src="motion.js"></script>
+<script src="gallery.js"></script>
 </body>
 </html>

@@ -1,0 +1,135 @@
+/* Official Easy Comfort logo palette; shared by every page and 3D scene. */
+:root,:root[data-palette],:root[data-theme=morning]{
+  color-scheme:light;
+  --bg:#fff;--bg-2:#edf8f6;--bg-3:#fff;--surface:#fff;--surface-2:#e1f3f0;
+  --fg:#153b3b;--fg-2:#416260;--fg-3:#577775;--line:rgba(20,93,89,.12);--line-2:rgba(20,93,89,.24);
+  --accent:#25aaa4;--accent-ink:#08736e;--cta:linear-gradient(180deg,#168a84,#08736e);--on-cta:#fff;
+  --cta-shadow:0 12px 26px -12px #168a8480;--glass:#ffffffcf;--glass-2:#fffffff0;--glass-line:#168a8420;
+  --pill:#168a8410;--pill-2:#168a8420;--glow-a:#30b4ab25;--glow-b:#ed7b2220;
+  --orange:#ec7825;--orange-2:#b94e0d;--room-n:#193f3e;--scene-n:#102f30;--room-m:#e0efea;--scene-m:#f4faf8;
+  --b1-bg:#08736e;--b1-fg:#fff;--b2-bg:#ffffff20;--b2-fg:#fff;--b2-line:#ffffff50;
+  --card-shadow:0 12px 36px -24px #125a5940;--card-shadow-2:0 22px 50px -26px #125a5960;
+  --stage:linear-gradient(160deg,#f5fcfa,#d9eeea);--grain:.02;
+}
+:root[data-theme=night]{color-scheme:dark;--bg:#102f30;--bg-2:#0a2425;--bg-3:#173d3e;--surface:#173d3e;--surface-2:#214b4b;--fg:#f3fbf9;--fg-2:#bddbd5;--fg-3:#9dbdb7;--line:#d6f4ee20;--line-2:#d6f4ee40;--accent:#39bcb4;--accent-ink:#71dfd5;--glass:#102f30d0;--glass-2:#102f30f0;--pill:#aee4db15;--pill-2:#aee4db25;--stage:linear-gradient(160deg,#204c4b,#102f30)}
+.brand-logo{display:block;width:164px;height:60px;overflow:hidden;background:white;border-radius:5px;position:relative}
+.brand-logo img{position:absolute;width:200px;height:200px;max-width:none;left:-18px;top:-62px}
+.card-photo:has(img[src*="-room.webp"])::before,.card-photo:has(img[src*="-room.webp"])::after{display:none}
+.grid .card-photo:has(img[src*="-room.webp"]),.card-photo:has(img[src*="-room.webp"]){aspect-ratio:3/2}
+.card-photo img[src*="-room.webp"],.grid .card-photo img[src*="-room.webp"]{padding:0;object-fit:cover;filter:none;transform:none!important}
+.card:hover .card-photo img[src*="-room.webp"]{transform:none!important}
+.room-gallery{max-width:1408px;margin:60px auto;padding:0 var(--gut)}
+.room-gallery-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}
+.room-gallery h2{font:400 clamp(2rem,5vw,4rem)/1 var(--display);margin:0}
+.room-gallery-controls{display:flex;gap:8px}
+.room-gallery button{border:1px solid var(--line-2);background:var(--surface);color:var(--fg);border-radius:50px;padding:10px 16px;min-height:44px;cursor:pointer}
+.room-gallery button:focus-visible,.room-track:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.room-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;overscroll-behavior-x:contain;padding-bottom:16px}
+.room-slide{flex:0 0 65%;scroll-snap-align:start;margin:0;min-width:0}
+.room-slide img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:14px;display:block}
+.room-slide figcaption{padding:12px 0;color:var(--fg-2)}
+@media(max-width:600px){.room-slide{flex-basis:94%}.room-gallery-head{align-items:flex-start;flex-direction:column}.brand-logo{width:140px;height:52px}.brand-logo img{width:175px;height:175px;left:-17px;top:-54px}}
+.room-image{overflow:hidden;border-radius:14px;aspect-ratio:3/2}
+.room-slide--detail img{transform:scale(1.35);transform-origin:50% 70%}
+/* Keep the selected Imperio cover above scroll-reveal opacity rules. */
+.js .card .card-photo img[data-colour]{opacity:0!important}
+.js .card .card-photo img[data-colour].is-shown{opacity:1!important}
+.badge{background:#ef7c28;color:#331604;box-shadow:0 6px 16px -6px #ef7c2880}
+
+/* Transparent wordmark: natural proportions, centred within the navigation. */
+.nav .brand{padding:0;align-self:center;display:flex;align-items:center}
+.nav .brand-logo{width:166px;height:48px;display:flex;align-items:center;justify-content:center;overflow:visible;background:transparent;border-radius:0}
+.nav .brand-logo img{position:static;display:block;width:100%;height:auto;max-height:48px;object-fit:contain;max-width:100%;margin:0}
+/* Editorial hero: quiet typography, spacious rhythm, one deliberate entrance. */
+.vhero-in{width:min(34rem,39vw)}
+.vhero-text .hero-eyebrow{font-size:.66rem;letter-spacing:.23em;font-weight:650;gap:14px}
+.vhero-text .hero-eyebrow::after{width:30px;height:2px}
+.vhero-text h1{font:500 clamp(2.5rem,4.2vw,4.6rem)/1.13 var(--sans);letter-spacing:-.055em;text-transform:none;margin-top:.4em}
+.vhero-text .t-rest,.vhero-text .t-easy{display:block}
+.vhero-text .t-easy{position:relative;font-family:'Young Serif',Georgia,serif;font-weight:400;letter-spacing:-.045em;padding-bottom:.16em;margin-top:.06em}
+.vhero-text .t-easy,.vhero-text .t-easy .w>span{background-image:none;color:var(--accent-ink)}
+.vhero-text .t-easy::after{content:'';position:absolute;left:0;bottom:0;width:64px;height:2px;background:var(--orange);transform:scaleX(var(--line-reveal,1));transform-origin:left}
+.vhero-text .hero-lead{max-width:37ch;font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.8;margin-top:1.3em}
+.vhero-text .hero-ctas{gap:12px;margin-top:26px}
+.vhero-text .btn--two{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
+.vhero-text .hero-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-2);padding-top:22px;margin-top:30px;gap:16px}
+.vhero-text .hero-facts li{padding:0;border:0;display:block}
+.vhero-text .hero-facts .ic{display:none}
+.vhero-text .hero-facts span{font-size:.68rem;line-height:1.5;font-weight:500}
+.vhero-text .hero-facts b{font-size:1.8rem;font-weight:500;letter-spacing:-.04em;margin-bottom:7px}
+@media(max-width:900px){.vhero-in{width:auto}.vhero-text h1{font-size:clamp(2.5rem,7.8vw,4.4rem)}.vhero-text .hero-lead{max-width:44ch}.vhero-text .hero-facts{margin-top:24px;padding-top:18px}}
+@media(max-width:600px){.nav .brand-logo{width:140px;height:42px}.nav .brand-logo img{max-height:42px}.vhero-text .hero-eyebrow{font-size:.6rem;letter-spacing:.18em}.vhero-text .hero-facts{gap:12px}.vhero-text .hero-facts b{font-size:1.6rem}}
+@media(prefers-reduced-motion:reduce){.vhero-text .t-easy::after{transform:none}}
+/* Quiet, consistently branded tiles. Keep the native link, remove the visual View badge. */
+.grid,:root:not([data-theme=morning]) .grid{--tile:#08736e;--tile-ink:#fff}
+.grid>.card:hover,.grid>.card:focus-within{transform:translateY(-3px);box-shadow:0 18px 32px -22px #08736e80}
+.grid:has(>.card:hover)>.card:not(:hover){transform:none;opacity:1;filter:none}
+.grid .card h3::before{display:none}
+.grid .card:hover .facts .feel,.grid .card:focus-within .facts .feel{color:#b4f2e8}
+.grid .card-actions{position:static}
+.grid .card-actions>.unveil-btn,.grid .card:not(:has([data-unveil])) .card-actions>.card-open{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:6px;background:none;box-shadow:none;transform:none;opacity:0!important;font-size:0;color:transparent;z-index:3}
+.grid .card:focus-within{outline:2px solid var(--accent);outline-offset:4px}
+.grid .colour-toggle{position:relative;z-index:4}
+.card-photo{background:var(--surface-2)}
+img.img-fading{transition:opacity .4s ease!important}
+/* Bedroom photography replaces the sky; a teal scrim maintains text contrast. */
+.why-sky{inset:0;transform:none!important}
+.why-sky::before{display:none}
+.why-sky img{width:100%;height:100%;object-fit:cover;object-position:50% 60%;display:block}
+.why-panel::after,[data-theme=morning] .why-panel::after{background:linear-gradient(180deg,#062f32e8 0%,#063a359e 48%,#052f2de8 100%)}
+.why h2,[data-theme=morning] .why h2{max-width:19ch;font:400 clamp(2.3rem,4.8vw,4.5rem)/1.15 'Young Serif',Georgia,serif;letter-spacing:-.035em;text-transform:none;color:#fff;text-shadow:none}
+.why-sub,[data-theme=morning] .why-sub{color:#e0f5f0;line-height:1.8;text-shadow:none;max-width:43ch}
+.why .pill-label{color:#e3faf4;background:#ffffff14;border-color:#ffffff30}
+.why-card{background:#0b514b88;box-shadow:inset 0 0 0 1px #b6eee52e;backdrop-filter:blur(8px)}
+.why-ico{color:#9de2d4}
+/* Teal atmosphere and softly illuminated footer dots. */
+.foot,:root:not([data-theme=morning]) .foot{--foot-sky:radial-gradient(ellipse at 50% 55%,#26aaa420,transparent 65%),var(--bg);--word:color-mix(in srgb,var(--accent) 12%,transparent)}
+.foot-dots{background:radial-gradient(circle,#29b7aa 1.5px,transparent 2px) 0 0/18px 18px;filter:drop-shadow(0 0 4px #26b8ac) drop-shadow(0 0 12px #26b8ac80);opacity:.85}
+.foot-dots::before{border-color:#26aaa460}.foot-dots::after{background:#26aaa460}
+.foot-btn{background:#08736e;box-shadow:0 0 28px #29b7aa30,0 12px 30px -18px #08736e80}
+.foot-btn:hover{box-shadow:0 0 40px #29b7aa60}.foot-btn small{background:#ef7c2826;color:#ffc491}
+.foot-icons a:hover{filter:drop-shadow(0 0 8px #26aaa470)}
+@media(prefers-reduced-motion:reduce){.grid>.card,.grid>.card:hover,.grid>.card:focus-within{transform:none;transition:none}}
+.room-gallery{padding-top:38px;padding-bottom:38px;border-top:1px solid var(--line)}
+.room-kicker{color:var(--accent-ink);font-size:.68rem;text-transform:uppercase;letter-spacing:.18em;margin-bottom:12px;font-weight:700}
+.room-gallery h2{font:400 clamp(2rem,4vw,3.5rem)/1.2 'Young Serif',Georgia,serif;letter-spacing:-.035em;text-transform:none}
+.room-intro{margin-top:14px;color:var(--fg-2);font-size:1rem;line-height:1.65}
+.room-gallery button{background:var(--surface);transition:background .2s,color .2s;min-width:44px}
+.room-gallery button:hover{background:var(--accent-ink);color:var(--bg)}
+.room-slide{flex-basis:60%;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.room-image,.room-slide img{border-radius:0}
+.room-slide figcaption{padding:18px 22px;font-size:1.05rem;font-weight:600;color:var(--fg)}
+.room-photo-link{display:block;text-decoration:none}
+.room-photo-link:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+@media(max-width:600px){.room-slide{flex-basis:90%}.room-slide figcaption{padding:14px 16px;font-size:.95rem}.room-gallery{margin-top:24px}.room-gallery-head{gap:20px}.room-gallery-controls{align-self:flex-end}}
+.room-image img{height:100%;width:100%;object-fit:cover}
+.why-panel::after{border-radius:0}
+/* Card click handling already opens the product; invisible links must not cover swatches. */
+.grid .card-actions>.unveil-btn,.grid .card:not(:has([data-unveil])) .card-actions>.card-open{pointer-events:none}
+.grid .colour-toggle{position:absolute}
+/* Shared desktop content margins: 20% on each side, with three catalog columns. */
+@media(min-width:1181px){
+  :root{--gut:20vw;--max:60vw}
+  .grid{--cols:3;--gap:24px}
+  .grid .card h3{font-size:clamp(1.55rem,1.8vw,2.35rem)}
+  .sec-head{gap:18px 28px}
+  .sec-head h2{font-size:clamp(3rem,5vw,6rem)}
+  .sec-head p{max-width:32ch}
+  .foot-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px}
+  .foot-cta{grid-column:1/-1;grid-row:2}
+  .foot-mail{white-space:normal;overflow-wrap:anywhere}
+  .foot-nav{justify-self:end}
+  .room-gallery{max-width:none}
+  .pp-rail{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:861px) and (max-width:1180px){
+  :root{--gut:8vw;--max:84vw}
+  .grid{--cols:3;--gap:18px}
+  .grid .card h3{font-size:1.65rem}
+}
+@media(max-width:860px){.grid{--cols:2}}
+@media(max-width:520px){.grid{--cols:1;--gap:24px}.grid .card h3{font-size:1.9rem}}
+/* A clear, illuminated action in both 3D showrooms. */
+#unveil,#ppInside{background:linear-gradient(135deg,#098780,#086660);color:#fff;border:1px solid #57dcd0;box-shadow:0 0 0 3px #2ab9ac20,0 0 22px #25bbae65,0 8px 24px #08736e40;transition:box-shadow .3s ease,background .3s ease,transform .3s ease}
+#unveil:hover,#ppInside:hover,#unveil:focus-visible,#ppInside:focus-visible{box-shadow:0 0 0 4px #2ab9ac30,0 0 34px #25bbae99,0 10px 28px #08736e55;outline:2px solid #9df6e9;outline-offset:4px}
+#unveil[aria-pressed=true],#ppInside[aria-pressed=true]{border-color:#ffb174;box-shadow:0 0 0 3px #ef7c2820,0 0 26px #ef7c2860,0 8px 24px #08736e40}

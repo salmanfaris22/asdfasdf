@@ -34,7 +34,11 @@
     if (document.readyState === 'complete') ldTo(32); else addEventListener('load', () => ldTo(32), { once: true });
     const filmTo = () => { const f = EC.film; if (f) ldTo(f.ready ? 100 : 30 + 69 * f.progress); };
     addEventListener('ec:film', filmTo); filmTo();
-    setTimeout(() => ldTo(100), DEBUG ? 90000 : 14000);   // whatever happens, it lifts
+    // The poster is enough to present the page; the film can finish buffering behind it.
+    const poster = new Image();
+    poster.onload = () => ldTo(100);
+    poster.src = $('heroVideo')?.poster || 'images/hero-poster.webp';
+    setTimeout(() => ldTo(100), DEBUG ? 90000 : 4500);   // whatever happens, it lifts
     let last = ld.t0;
     (function tick() {
       if (ld.done || ld.ending) return;
@@ -42,13 +46,13 @@
       ld.val = Math.min(ld.target, ld.val + Math.max(dt * 12, (ld.target - ld.val) * (1 - Math.exp(-dt * 6))));
       $('ldNum').textContent = Math.round(ld.val);
       loader.style.setProperty('--ld', (ld.val / 100).toFixed(3));
-      if (ld.val >= 100 && performance.now() - ld.t0 > 1500) { ld.ending = true; setTimeout(ldFinish, calm ? 0 : 320); return; }   // long enough to read, never a flash
+      if (ld.val >= 100 && performance.now() - ld.t0 > 900) { ld.ending = true; setTimeout(ldFinish, calm ? 0 : 320); return; }   // long enough to read, never a flash
       requestAnimationFrame(tick);
     })();
     // however slowly frames come, step aside once everything is ready
     const watch = setInterval(() => {
       if (ld.done) clearInterval(watch);
-      else if (ld.target >= 100 && performance.now() - ld.t0 > 2200) { clearInterval(watch); ldFinish(); }
+      else if (ld.target >= 100 && performance.now() - ld.t0 > 1200) { clearInterval(watch); ldFinish(); }
     }, 250);
   } else { ld.done = true; afterLoad = null; root.classList.remove('is-loading'); loader?.remove(); }
 

@@ -45,8 +45,9 @@
   document.querySelectorAll('img[loading="lazy"]:not([data-colour])').forEach((im) => {
     if (im.complete && im.naturalWidth) return;
     im.classList.add('img-wait', 'img-fading');
-    const done = () => { im.classList.remove('img-wait'); setTimeout(() => im.classList.remove('img-fading'), 800); };
+    const done = async () => { try { await im.decode(); } catch {} requestAnimationFrame(() => { im.classList.remove('img-wait'); setTimeout(() => im.classList.remove('img-fading'), 450); }); };
     im.addEventListener('load', done, { once: true }); im.addEventListener('error', done, { once: true });
+    if (im.complete) done();
   });
   // GSAP moves it; a CSS transition on the same property would drag behind every frame
   const still = (els) => gsap.set(els, { transition: 'none' });
@@ -89,8 +90,9 @@
     still([...words, ...bits]);
     const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
     tl.fromTo(video, { scale: 1.16 }, { scale: 1, duration: 2.6, ease: 'power2.out', clearProps: 'transform' })
-      .from(words, { yPercent: 112, duration: 1.25, stagger: .08, ease: 'power4.out', clearProps: CLEAR }, .2)
-      .from(bits, { y: 28, autoAlpha: 0, duration: .95, stagger: .07, clearProps: CLEAR }, .55);
+      .from(words, { yPercent: 115, rotation: 3, autoAlpha: 0, duration: 1.5, stagger: .13, ease: 'power4.out', clearProps: CLEAR }, .25)
+      .from(bits, { y: 22, autoAlpha: 0, duration: 1.1, stagger: .11, clearProps: CLEAR }, .75)
+      .fromTo('.vhero-text .t-easy', { '--line-reveal': 0 }, { '--line-reveal': 1, duration: 1.2, ease: 'power2.inOut' }, 1.4);
     const go = () => tl.play();
     if (!root.classList.contains('is-loading')) go();
     else new MutationObserver((_, o) => {

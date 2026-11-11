@@ -84,9 +84,9 @@
       "guarantee": "10-year guarantee",
       "photos": [
         {
-          "src": "images/camellia-euro-top.webp",
-          "w": 676,
-          "h": 193,
+          "src": "images/camellia-euro-top-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Camellia Euro Top mattress in a white Tencel cover",
           "colour": null
         }
@@ -167,9 +167,9 @@
       "guarantee": "10-year guarantee",
       "photos": [
         {
-          "src": "images/camellia-pillow-top.webp",
-          "w": 555,
-          "h": 207,
+          "src": "images/camellia-pillow-top-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Camellia Pillow Top mattress in white, with a quilted pillow top",
           "colour": null
         }
@@ -249,9 +249,9 @@
       "guarantee": "10-year guarantee",
       "photos": [
         {
-          "src": "images/prime-aura.webp",
-          "w": 688,
-          "h": 308,
+          "src": "images/prime-aura-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Prime Aura mattress in a white jacquard cover with grey flowers",
           "colour": null
         }
@@ -332,9 +332,9 @@
       "guarantee": "10-year guarantee",
       "photos": [
         {
-          "src": "images/emma-french-top.webp",
-          "w": 896,
-          "h": 297,
+          "src": "images/emma-french-top-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Emma French Top mattress in a pale green cover with grey palm leaves",
           "colour": null
         }
@@ -419,16 +419,16 @@
       "guarantee": "10-year guarantee",
       "photos": [
         {
-          "src": "images/imperio-white.webp",
-          "w": 584,
-          "h": 183,
+          "src": "images/imperio-white-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Imperio mattress in white, with a grey geometric border",
           "colour": "White"
         },
         {
-          "src": "images/imperio-blue.webp",
-          "w": 590,
-          "h": 167,
+          "src": "images/imperio-blue-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Imperio mattress in blue, with a geometric pattern",
           "colour": "Blue"
         }
@@ -512,9 +512,9 @@
       "guarantee": "7-year guarantee",
       "photos": [
         {
-          "src": "images/hybrid-plush.webp",
-          "w": 482,
-          "h": 140,
+          "src": "images/hybrid-plush-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Hybrid Plush mattress in a blue jacquard cover with a leaf pattern",
           "colour": null
         }
@@ -594,9 +594,9 @@
       "guarantee": "5-year guarantee",
       "photos": [
         {
-          "src": "images/hybrid-eco.webp",
-          "w": 785,
-          "h": 178,
+          "src": "images/hybrid-eco-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Hybrid Eco mattress in a blue patterned cover",
           "colour": null
         }
@@ -676,9 +676,9 @@
       "guarantee": "5-year guarantee",
       "photos": [
         {
-          "src": "images/vento.webp",
-          "w": 1000,
-          "h": 459,
+          "src": "images/vento-room.webp",
+          "w": 1536,
+          "h": 1024,
           "alt": "Easy Comfort Sleep Solutions Vento mattress in a tropical print cover with toucans and flowers",
           "colour": null
         }
