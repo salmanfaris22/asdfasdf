@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mattress | Easy Comfort Sleep Solutions</title>
 <meta name="description" content="See an Easy Comfort Sleep Solutions mattress made layer by layer in 3D, look inside it, and ask for the price in your size.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#f8f3ea">
 <meta name="color-scheme" content="dark light">
 <script>
 (function (d) {
@@ -13,20 +13,20 @@
   var t; try { t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('ec-theme'); } catch (e) {}
   d.setAttribute('data-theme', t === 'night' ? 'night' : 'morning');
   d.setAttribute('data-palette', 'brand');
-  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff'); }
+  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#f8f3ea'); }
 })(document.documentElement);
 </script>
 <link rel="preload" href="fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="images/easy-comfort-logo.jpeg" type="image/jpeg">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="brand.css">
+<link rel="stylesheet" href="brand.css?v=20261112-bold-performance">
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to the content</a>
 
 <header class="nav" id="nav">
-  <a class="brand" href="index.html" aria-label="Easy Comfort Sleep Solutions, home"><span class="brand-logo"><img src="images/easy-comfort-logo-transparent.webp" width="2048" height="768" alt="Easy Comfort — For a Sensational Sleep"></span></a>
+  <a class="brand" href="index.html" aria-label="Easy Comfort Sleep Solutions, home"><span class="brand-logo"><img src="images/easy-comfort-logo-nav.webp" width="420" height="155" alt="Easy Comfort — For a Sensational Sleep"></span></a>
   <nav class="nav-links" id="navLinks" aria-label="Main">
     <span class="nav-pill" aria-hidden="true"></span>
     <a href="index.html#showroom" data-nav="showroom">3D Showroom</a>
@@ -184,12 +184,11 @@
 </footer>
 
 <script src="products.js"></script>
-<script src="product.js"></script>
-<script src="site.js"></script>
+<script src="product.js?v=20261112-assets"></script>
+<script src="site.js?v=20261112-performance"></script>
 <script src="vendor/gsap.min.js"></script>
 <script src="vendor/ScrollTrigger.min.js"></script>
-<script src="vendor/lenis.min.js"></script>
-<script src="motion.js"></script>
+<script src="motion.js?v=20261112-performance"></script>
 <script src="gallery.js"></script>
 </body>
 </html>

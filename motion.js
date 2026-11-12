@@ -18,28 +18,7 @@
   const ms = (e) => (parseFloat(e.style.getPropertyValue('--rd')) || 0) / 1000;
   const EC = window.EC = window.EC || {};
 
-  /* ---------- 0. Smooth scrolling: Lenis (vendor/, MIT), running on GSAP's clock ----------
-     The wheel glides instead of stepping; touch stays native. Anchor links glide too. It waits while the loading screen
-     is up, and leaves the details window and the sideways rows alone (they scroll themselves). */
-  if (window.Lenis && matchMedia('(pointer:fine)').matches) {
-    const lenis = new Lenis({
-      lerp: .085, wheelMultiplier: .95, anchors: { offset: 0, duration: 1.3 },
-      prevent: (node) => !!node.closest?.('dialog, [data-lenis-prevent], .picker-keys, .pp-rail'),
-    });
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((t) => lenis.raf(t * 1000));
-    gsap.ticker.lagSmoothing(0);
-    EC.lenis = lenis;
-    if (root.classList.contains('is-loading')) {
-      lenis.stop();
-      new MutationObserver((_, o) => { if (!root.classList.contains('is-loading')) { o.disconnect(); lenis.start(); } })
-        .observe(root, { attributes: true, attributeFilter: ['class'] });
-    }
-    // while a details window is open the page stays put
-    document.querySelectorAll('dialog').forEach((d) => {
-      new MutationObserver(() => (d.open ? lenis.stop() : lenis.start())).observe(d, { attributes: true, attributeFilter: ['open'] });
-    });
-  }
+  // Native scrolling avoids an extra animation loop and responds directly to wheel/touch input.
 
   /* ---------- 0b. Pictures that arrive late fade in instead of popping ---------- */
   document.querySelectorAll('img[loading="lazy"]:not([data-colour])').forEach((im) => {
@@ -76,7 +55,7 @@
   rv.filter((e) => !special.has(e)).forEach((e) => {
     still(e);
     gsap.from(e, {
-      y: 46, autoAlpha: 0, duration: 1.1, ease: 'power3.out', delay: ms(e), clearProps: CLEAR,
+      y: 46, autoAlpha: 0, duration: .65, ease: 'power3.out', delay: ms(e), clearProps: CLEAR,
       scrollTrigger: { trigger: e, start: 'top 92%', once: true },
     });
   });
@@ -91,7 +70,7 @@
     const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
     tl.fromTo(video, { scale: 1.16 }, { scale: 1, duration: 2.6, ease: 'power2.out', clearProps: 'transform' })
       .from(words, { yPercent: 115, rotation: 3, autoAlpha: 0, duration: 1.5, stagger: .13, ease: 'power4.out', clearProps: CLEAR }, .25)
-      .from(bits, { y: 22, autoAlpha: 0, duration: 1.1, stagger: .11, clearProps: CLEAR }, .75)
+      .from(bits, { y: 22, autoAlpha: 0, duration: .65, stagger: .11, clearProps: CLEAR }, .75)
       .fromTo('.vhero-text .t-easy', { '--line-reveal': 0 }, { '--line-reveal': 1, duration: 1.2, ease: 'power2.inOut' }, 1.4);
     const go = () => tl.play();
     if (!root.classList.contains('is-loading')) go();
@@ -118,17 +97,12 @@
         clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1.5, ease: 'expo.out', delay: .1 + i * .14, clearProps: 'clipPath',
         scrollTrigger: { trigger: '.inside-grid', start: 'top 86%', once: true },
       });
-      gsap.fromTo(img, { yPercent: -5, scale: 1.12 }, { yPercent: 5, scale: 1.12, ease: 'none', scrollTrigger: { trigger: c, start: 'top bottom', end: 'bottom top', scrub: true } });
       still(num);
       gsap.from(num, { yPercent: 70, autoAlpha: 0, duration: 1, delay: .45 + i * .14, ease: 'power3.out', clearProps: CLEAR, scrollTrigger: { trigger: '.inside-grid', start: 'top 86%', once: true } });
     });
   }
 
-  /* ---------- 6. The showroom grows to its full size as it comes up ---------- */
-  const show = $('.story--show .stage');
-  if (show) {
-    gsap.fromTo(show, { scale: .86, y: 60 }, { scale: 1, y: 0, ease: 'none', scrollTrigger: { trigger: show, start: 'top bottom', end: 'top 30%', scrub: .6 } });
-  }
+  // Keep the WebGL canvas at a stable size while scrolling.
 
   /* ---------- 7. The list: tiles arrive in batches, their photos settle from closer ---------- */
   if (tiles.length) {
@@ -138,7 +112,7 @@
     ScrollTrigger.batch(tiles, {
       start: 'top 94%', once: true,
       onEnter: (batch) => {
-        gsap.to(batch, { autoAlpha: 1, y: 0, scale: 1, duration: 1.05, stagger: .09, ease: 'power3.out', clearProps: CLEAR, overwrite: true });
+        gsap.to(batch, { autoAlpha: 1, y: 0, scale: 1, duration: .65, stagger: .09, ease: 'power3.out', clearProps: CLEAR, overwrite: true });
         const ims = batch.map((t) => $('.card-photo img', t)).filter(Boolean);   // the pillows are drawn, not photographed
         if (ims.length) gsap.fromTo(ims, { scale: 1.22 }, { scale: 1, duration: 1.5, stagger: .09, ease: 'expo.out', clearProps: CLEAR });
       },

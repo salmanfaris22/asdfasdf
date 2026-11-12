@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Easy Comfort Sleep Solutions: foam mattresses and pillows, in every standard size or made to yours</title>
 <meta name="description" content="Eight Easy Comfort Sleep Solutions foam mattresses, from the 4″ Hybrid Eco to the 12″ Camellia Euro Top, and pillows. Scroll to watch the layers rise apart, turn every mattress in the 3D showroom, then find a dealer near you. All standard sizes and tailor-made sizes, up to 10 years guarantee on the foam core.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#f8f3ea">
 <meta name="color-scheme" content="dark light">
 <script>
 /* Before anything paints: the saved theme, and always start at the top (the loading screen makes the bed there) */
@@ -14,7 +14,7 @@
   var t; try { t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('ec-theme'); } catch (e) {}
   d.setAttribute('data-theme', t === 'night' ? 'night' : 'morning');
   d.setAttribute('data-palette', 'brand');
-  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#ffffff'); }
+  if (t === 'morning') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#f8f3ea'); }
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
   var n = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
   if (location.hash && n.type && n.type !== 'navigate') history.replaceState(null, '', location.pathname + location.search);
@@ -26,7 +26,7 @@
 <link rel="preload" href="fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="images/easy-comfort-logo.jpeg" type="image/jpeg">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="brand.css">
+<link rel="stylesheet" href="brand.css?v=20261112-bold-performance">
 </head>
 <body>
 <!-- Loading screen: a full page with the mattress layers stacking while the 3D bedroom gets ready behind it,
@@ -43,7 +43,7 @@
 <a class="skip" href="#range">Skip to the mattresses</a>
 
 <header class="nav" id="nav">
-  <a class="brand" href="#top" aria-label="Easy Comfort Sleep Solutions, home"><span class="brand-logo"><img src="images/easy-comfort-logo-transparent.webp" width="2048" height="768" alt="Easy Comfort — For a Sensational Sleep"></span></a>
+  <a class="brand" href="#top" aria-label="Easy Comfort Sleep Solutions, home"><span class="brand-logo"><img src="images/easy-comfort-logo-nav.webp" width="420" height="155" alt="Easy Comfort — For a Sensational Sleep"></span></a>
   <nav class="nav-links" id="navLinks" aria-label="Main">
     <span class="nav-pill" aria-hidden="true"></span>
     <a href="#showroom" data-nav="showroom">3D Showroom</a>
@@ -81,23 +81,22 @@
   <section class="vhero" id="top" aria-labelledby="heroTitle">
     <video class="vhero-video" id="heroVideo" autoplay muted playsinline preload="auto" poster="images/hero-poster.webp"
       aria-label="An Easy Comfort Sleep Solutions mattress on a made bed: the bedding lifts away, the layers inside rise apart, then settle back and the bed is made again.">
-      <source src="video/hero-720.mp4" type="video/mp4" media="(max-width: 900px)">
-      <source src="video/hero-1080.mp4" type="video/mp4">
+      <source src="video/hero-720-light.mp4" type="video/mp4" media="(max-width: 900px)">
+      <source src="video/hero-1080-light.mp4" type="video/mp4">
     </video>
     <div class="vhero-shade" aria-hidden="true"></div>
     <div class="vhero-in">
       <header class="vhero-text">
         <p class="eyebrow hero-eyebrow">Easy Comfort Sleep Solutions</p>
         <h1 id="heroTitle"><span class="t-rest">Let the day go.</span> <span class="t-easy">Rest beautifully.</span></h1>
-        <p class="hero-lead">A softer landing. A little more stillness. Find your comfort in our collection of eight mattresses — in every standard size, or made just for you.</p>
         <div class="hero-ctas" id="heroCtas">
           <a class="btn btn--one" href="#range">Find your mattress <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           <a class="btn btn--two down" href="#inside"><svg class="ic ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L18.8 12z"/></svg>See what’s inside</a>
         </div>
         <ul class="hero-facts" id="heroFacts">
-          <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 3 10.5 16 17l13-6.5zM3 16l13 6.5L29 16M3 21.5 16 28l13-6.5"/></svg><span><b>8</b>Ways to find your comfort</span></li>
-          <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5 5 7.5v8c0 6.6 4.6 11.2 11 13 6.4-1.8 11-6.4 11-13v-8z"/><path d="m11 16 3.6 3.6 6.9-7.1"/></svg><span><b>10 yr</b>Foam-core guarantee, up to</span></li>
-          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg><span><b>7</b>Dealers to welcome you</span></li>
+          <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 3 10.5 16 17l13-6.5zM3 16l13 6.5L29 16M3 21.5 16 28l13-6.5"/></svg><span><b>8</b>Mattresses to explore</span></li>
+          <li><svg class="ic" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5 5 7.5v8c0 6.6 4.6 11.2 11 13 6.4-1.8 11-6.4 11-13v-8z"/><path d="m11 16 3.6 3.6 6.9-7.1"/></svg><span><b>Up to 10 yr</b>Foam-core guarantee</span></li>
+          <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg><span><b>7</b>Welcoming dealers</span></li>
         </ul>
       </header>
     </div>
@@ -141,7 +140,7 @@
     <div class="stage is-showroom has-show" id="stage" style="--show:1;--copy:0">
       <canvas class="bed-canvas" id="bed" role="img"
         aria-label="A 3D bedroom with an Easy Comfort Sleep Solutions mattress on an oak bed. Drag to turn it, press it, or unveil the layers inside."></canvas>
-      <img class="bed-fallback" id="bedFallback" src="images/prime-aura-room.webp" width="1536" height="1024" alt="" hidden>
+      <img class="bed-fallback" id="bedFallback" src="images/prime-aura-room.webp" width="1536" height="1024" alt="" loading="lazy" hidden>
 
       <header class="showroom-head">
         <p class="eyebrow">3D showroom</p>
@@ -198,7 +197,7 @@
     <div class="grid" id="grid" data-rv-kids="3" data-rv-step="110">
 
       <article class="card" id="camellia-euro-top" data-feel="Soft" data-model="camellia-euro-top" data-thick="8″|10″|12″">
-        <figure class="card-photo"><img src="images/camellia-euro-top-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Camellia Euro Top mattress in a white Tencel cover"><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
+        <figure class="card-photo"><img src="images/camellia-euro-top-room.webp" srcset="images/camellia-euro-top-room-480.webp 480w, images/camellia-euro-top-room-768.webp 768w, images/camellia-euro-top-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Camellia Euro Top mattress in a white Tencel cover"><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:0">Soft</li><li>8–12″</li><li>10-year guarantee</li></ul>
           <h3>Camellia Euro Top</h3>
@@ -223,7 +222,7 @@
       </article>
 
       <article class="card" id="camellia-pillow-top" data-feel="Soft" data-model="camellia-pillow-top" data-thick="8″|10″">
-        <figure class="card-photo"><img src="images/camellia-pillow-top-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Camellia Pillow Top mattress in white, with a quilted pillow top"><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
+        <figure class="card-photo"><img src="images/camellia-pillow-top-room.webp" srcset="images/camellia-pillow-top-room-480.webp 480w, images/camellia-pillow-top-room-768.webp 768w, images/camellia-pillow-top-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Camellia Pillow Top mattress in white, with a quilted pillow top"><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:0">Soft</li><li>8–10″</li><li>10-year guarantee</li></ul>
           <h3>Camellia Pillow Top</h3>
@@ -249,7 +248,7 @@
       </article>
 
       <article class="card" id="prime-aura" data-feel="Medium" data-model="prime-aura" data-thick="7″" data-badge="Signature">
-        <figure class="card-photo"><img src="images/prime-aura-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Prime Aura mattress in a white jacquard cover with grey flowers"><p class="badge">Signature</p><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
+        <figure class="card-photo"><img src="images/prime-aura-room.webp" srcset="images/prime-aura-room-480.webp 480w, images/prime-aura-room-768.webp 768w, images/prime-aura-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Prime Aura mattress in a white jacquard cover with grey flowers"><p class="badge">Signature</p><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:.5">Medium</li><li>7″</li><li>10-year guarantee</li></ul>
           <h3>Prime Aura</h3>
@@ -274,7 +273,7 @@
       </article>
 
       <article class="card" id="emma-french-top" data-feel="Medium" data-model="emma-french-top" data-thick="6″|8″">
-        <figure class="card-photo"><img src="images/emma-french-top-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Emma French Top mattress in a pale green cover with grey palm leaves"><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
+        <figure class="card-photo"><img src="images/emma-french-top-room.webp" srcset="images/emma-french-top-room-480.webp 480w, images/emma-french-top-room-768.webp 768w, images/emma-french-top-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Emma French Top mattress in a pale green cover with grey palm leaves"><p class="ptag" aria-hidden="true">10-year guarantee</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:.5">Medium</li><li>6–8″</li><li>10-year guarantee</li></ul>
           <h3>Emma French Top</h3>
@@ -300,8 +299,8 @@
 
       <article class="card" id="imperio" data-feel="Hard" data-model="imperio" data-thick="6″|8″|10″" data-colours="White|Blue">
         <figure class="card-photo">
-          <img class="is-shown" src="images/imperio-white-room.webp" width="1536" height="1024" loading="lazy" data-colour="White" alt="Easy Comfort Sleep Solutions Imperio mattress in white, with a grey geometric border">
-          <img src="images/imperio-blue-room.webp" width="1536" height="1024" loading="lazy" data-colour="Blue" alt="Easy Comfort Sleep Solutions Imperio mattress in blue, with a geometric pattern">
+          <img class="is-shown" src="images/imperio-white-room.webp" srcset="images/imperio-white-room-480.webp 480w, images/imperio-white-room-768.webp 768w, images/imperio-white-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" data-colour="White" alt="Easy Comfort Sleep Solutions Imperio mattress in white, with a grey geometric border">
+          <img src="images/imperio-blue-room.webp" srcset="images/imperio-blue-room-480.webp 480w, images/imperio-blue-room-768.webp 768w, images/imperio-blue-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" data-colour="Blue" alt="Easy Comfort Sleep Solutions Imperio mattress in blue, with a geometric pattern">
           <div class="colour-toggle" role="group" aria-label="Imperio cover colour">
             <button type="button" aria-pressed="true" data-colour="White"><i style="--c:#f2f1ec"></i>White</button>
             <button type="button" aria-pressed="false" data-colour="Blue"><i style="--c:#1f3170"></i>Blue</button>
@@ -332,7 +331,7 @@
       </article>
 
       <article class="card" id="hybrid-plush" data-feel="Hard" data-model="hybrid-plush" data-thick="4.5″">
-        <figure class="card-photo"><img src="images/hybrid-plush-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Hybrid Plush mattress in a blue jacquard cover with a leaf pattern"><p class="ptag" aria-hidden="true">7-year guarantee</p></figure>
+        <figure class="card-photo"><img src="images/hybrid-plush-room.webp" srcset="images/hybrid-plush-room-480.webp 480w, images/hybrid-plush-room-768.webp 768w, images/hybrid-plush-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Hybrid Plush mattress in a blue jacquard cover with a leaf pattern"><p class="ptag" aria-hidden="true">7-year guarantee</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:.85">Firm-leaning plush</li><li>4.5″</li><li>7-year guarantee</li></ul>
           <h3>Hybrid Plush</h3>
@@ -359,7 +358,7 @@
       </article>
 
       <article class="card" id="hybrid-eco" data-feel="Hard" data-model="hybrid-eco" data-thick="4″">
-        <figure class="card-photo"><img src="images/hybrid-eco-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Hybrid Eco mattress in a blue patterned cover"><p class="ptag" aria-hidden="true">5-year guarantee</p></figure>
+        <figure class="card-photo"><img src="images/hybrid-eco-room.webp" srcset="images/hybrid-eco-room-480.webp 480w, images/hybrid-eco-room-768.webp 768w, images/hybrid-eco-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Hybrid Eco mattress in a blue patterned cover"><p class="ptag" aria-hidden="true">5-year guarantee</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:1">Hard</li><li>4″</li><li>5-year guarantee</li></ul>
           <h3>Hybrid Eco</h3>
@@ -384,7 +383,7 @@
       </article>
 
       <article class="card" id="vento" data-feel="Hard" data-model="vento" data-thick="5″">
-        <figure class="card-photo"><img src="images/vento-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Vento mattress in a tropical print cover with toucans and flowers"><p class="ptag" aria-hidden="true">5-year guarantee</p></figure>
+        <figure class="card-photo"><img src="images/vento-room.webp" srcset="images/vento-room-480.webp 480w, images/vento-room-768.webp 768w, images/vento-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Easy Comfort Sleep Solutions Vento mattress in a tropical print cover with toucans and flowers"><p class="ptag" aria-hidden="true">5-year guarantee</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:1">Hard</li><li>5″</li><li>5-year guarantee</li></ul>
           <h3>Vento</h3>
@@ -410,7 +409,7 @@
 
       <!-- Illustrative AI pillow category photograph. -->
       <article class="card" id="pillows" data-feel="Pillows" data-sizes="King, 30″ × 20″|Queen, 18″ × 27″|Standard, 16″ × 24″">
-        <figure class="card-photo"><img src="images/pillows-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt="Illustration of three white pillows arranged on a bed"><p class="ptag">Illustrative image</p></figure>
+        <figure class="card-photo"><img src="images/pillows-room.webp" srcset="images/pillows-room-480.webp 480w, images/pillows-room-768.webp 768w, images/pillows-room.webp 1536w" sizes="(min-width: 1181px) calc(20vw - 16px), (min-width: 861px) calc(28vw - 12px), (min-width: 521px) 44vw, 92vw" width="1536" height="1024" loading="lazy" decoding="async" alt="Illustration of three white pillows arranged on a bed"><p class="ptag">Illustrative image</p></figure>
         <div class="card-body">
           <ul class="facts"><li class="feel" style="--lvl:.3">Medium soft</li><li>Three sizes</li></ul>
           <h3>Easy Comfort Sleep Solutions Pillows</h3>
@@ -453,7 +452,7 @@
   <!-- Bedroom photography and the facts behind the comfort. -->
   <section class="why" id="why" aria-labelledby="whyTitle">
     <div class="why-panel" data-rv>
-      <div class="why-sky" aria-hidden="true"><img src="images/prime-aura-room.webp" width="1536" height="1024" loading="lazy" decoding="async" alt=""></div>
+      <div class="why-sky" aria-hidden="true"><img src="images/prime-aura-room.webp" srcset="images/prime-aura-room-480.webp 480w, images/prime-aura-room-768.webp 768w, images/prime-aura-room.webp 1536w" sizes="100vw" width="1536" height="1024" loading="lazy" decoding="async" alt=""></div>
       <p class="pill-label" data-rv="350">Why Easy Comfort Sleep Solutions</p>
       <h2 id="whyTitle" data-split>Comfort you feel. Quality underneath.</h2>
       <p class="why-sub" data-rv="120">Thoughtfully layered foams. Sizes made for your space. Lasting reassurance, right at the core.</p>
@@ -567,13 +566,12 @@
   <p class="foot-word" aria-hidden="true">easy comfort</p>
 </footer>
 
-<script src="site.js"></script>
+<script src="site.js?v=20261112-performance"></script>
 <script src="products.js"></script>
-<script src="hero.js"></script>
-<script src="script.js"></script>
+<script src="hero.js?v=20261112-performance"></script>
+<script src="script.js?v=20261112-assets"></script>
 <script src="vendor/gsap.min.js"></script>
 <script src="vendor/ScrollTrigger.min.js"></script>
-<script src="vendor/lenis.min.js"></script>
-<script src="motion.js"></script>
+<script src="motion.js?v=20261112-performance"></script>
 </body>
 </html>

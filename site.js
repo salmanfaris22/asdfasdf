@@ -15,7 +15,7 @@
   /* ---------- Colour palettes ----------
      Four palettes, each with a night and a morning (style.css). The head of each page sets data-palette before anything
      paints; the Colours tab on the left edge lets you try them; the 3D rooms take their wall colours from the palette. */
-  const METAS = { brand: ['#102f30', '#ffffff'] };
+  const METAS = { brand: ['#102f30', '#f8f3ea'] };
   EC.palette = () => 'brand';
   EC.roomColors = () => { const cs = getComputedStyle(root), v = (k) => cs.getPropertyValue(k).trim(); return { n: v('--room-n'), m: v('--room-m'), sn: v('--scene-n'), sm: v('--scene-m') }; };
   const metaFor = (t) => METAS[EC.palette()][t === 'morning' ? 1 : 0];
@@ -132,19 +132,6 @@
     [...g.children].forEach((c, i) => { c.classList.add('rv'); EC.reveal(c, (i % per) * step); });
   });
 
-  /* The sky behind the numbers drifts slower than the page */
-  const sky = document.querySelector('.why-sky');
-  if (sky && !calm) {
-    let ticking = false;
-    const move = () => {
-      ticking = false;
-      const r = sky.parentElement.getBoundingClientRect();
-      if (r.bottom < -100 || r.top > innerHeight + 100) return;
-      sky.style.setProperty('--py', `${(((r.top + r.height / 2) - innerHeight / 2) / innerHeight * -70).toFixed(1)}px`);
-    };
-    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(move); } }, { passive: true });
-    move();
-  }
 
   /* Numbers count up the first time they are seen */
   document.querySelectorAll('[data-count]').forEach((el) => {

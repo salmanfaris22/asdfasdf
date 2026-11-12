@@ -59,7 +59,7 @@
   $('ppMore').innerHTML = others.map((k) => {
     const o = PRODUCTS[k], ph = o.photos[0];
     return `<a class="card pp-card" href="mattress.html?m=${k}">
-      <figure class="card-photo"><img src="${ph.src}" width="${ph.w}" height="${ph.h}" loading="lazy" alt="${esc(ph.alt)}"></figure>
+      <figure class="card-photo"><img src="${ph.src}" srcset="${ph.src.replace('.webp', '-480.webp')} 480w, ${ph.src.replace('.webp', '-768.webp')} 768w, ${ph.src} 1536w" sizes="(max-width: 520px) 92vw, (max-width: 860px) 44vw, 28vw" decoding="async" width="${ph.w}" height="${ph.h}" loading="lazy" alt="${esc(ph.alt)}"></figure>
       <div class="card-body">
         <ul class="facts"><li class="feel" style="--lvl:${o.lvl}">${esc(o.feel)}</li><li>${span(o.thick)}</li><li>${esc(o.guarantee)}</li></ul>
         <h3>${esc(o.name)}</h3>
@@ -193,7 +193,7 @@
 
   function load() {
     const s = document.createElement('script');
-    s.src = 'bed3d.js';
+    s.src = 'bed3d.js?v=20261112-performance';
     s.onerror = noBed;
     s.onload = async () => {
       if (!window.EasyComfortBed) { noBed(); return; }

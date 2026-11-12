@@ -81,7 +81,7 @@
     const c = cardOf(id), lab = document.createElement('label'), img = photoOf(id, id === 'imperio' ? 'White' : null);
     lab.className = 'pk';
     const feel = c.querySelector('.feel').textContent, thick = c.querySelectorAll('.facts li')[1].textContent;
-    lab.innerHTML = `<input type="radio" name="model" value="${id}"${id === state.id ? ' checked' : ''}><span class="pk-img"><img src="${img.getAttribute('src')}" alt="" loading="lazy"></span><span class="pk-t"><b>${c.querySelector('h3').textContent}</b><small>${feel} · ${thick}</small></span><i class="pk-dot" aria-hidden="true"></i>`;
+    lab.innerHTML = `<input type="radio" name="model" value="${id}"${id === state.id ? ' checked' : ''}><span class="pk-img"><img src="${img.getAttribute('src').replace(/\.webp$/, '-160.webp')}" alt="" loading="lazy"></span><span class="pk-t"><b>${c.querySelector('h3').textContent}</b><small>${feel} · ${thick}</small></span><i class="pk-dot" aria-hidden="true"></i>`;
     return lab;
   }));
 
@@ -169,7 +169,7 @@
   function showFallbackPhoto() {
     const img = photoOf(state.id, state.id === 'imperio' ? state.colour.imperio : null);
     const fb = $('bedFallback');
-    fb.src = img.currentSrc || img.src; fb.alt = img.alt; fb.width = img.width; fb.height = img.height;
+    fb.src = img.src; fb.alt = img.alt; fb.width = img.width; fb.height = img.height;
   }
   const bedFailed = () => {
     fallbackOn = true;
@@ -180,16 +180,15 @@
   };
   function loadBundle() {
     const s = document.createElement('script');
-    s.src = 'bed3d.js';
+    s.src = 'bed3d.js?v=20261112-performance';
     s.onerror = bedFailed;
     s.onload = () => {
       if (!window.EasyComfortBed) { bedFailed(); return; }
-      // set the bed up while the page is quiet (the visitor is still at the top), or at once if they head for it first
+      // Build the showroom only when the visitor approaches it.
       let started = false;
       const start = () => { if (started) return; started = true; io.disconnect(); mountBed(); };
-      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) start(); }, { rootMargin: '120% 0px' });
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) start(); }, { rootMargin: '500px 0px' });
       io.observe(stage);
-      (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(start, { timeout: 4000 });
     };
     document.body.append(s);
   }
@@ -209,7 +208,14 @@
     railTo(state.id);
   }
   renderShowcase();
-  whenLoaded(() => { if (document.readyState === 'complete') setTimeout(loadBundle, 300); else addEventListener('load', () => setTimeout(loadBundle, 300), { once: true }); });
+  whenLoaded(() => {
+    const nearShowroom = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      nearShowroom.disconnect();
+      loadBundle();
+    }, { rootMargin: '800px 0px' });
+    nearShowroom.observe(stage);
+  });
   addEventListener('ec:theme', (e) => bed?.setTheme(e.detail.theme, true));
   addEventListener('ec:palette', () => bed?.setPalette(EC.roomColors()));   // the other room, at once, under the circle that reveals it
 
@@ -250,23 +256,6 @@
       }, { passive: true });
       c.addEventListener('pointerleave', () => ['--rx', '--ry', '--px', '--py'].forEach((v) => c.style.removeProperty(v)));
     });
-  }
-
-  /* The room behind each photo drifts a little against the scroll: --sy runs -1 (card low on screen) to 1 (high) */
-  if (!calm) {
-    let sy = false;
-    const drift = () => {
-      sy = false;
-      const h = innerHeight;
-      for (const c of cards) {
-        if (c.hidden) continue;
-        const r = c.getBoundingClientRect();
-        if (r.bottom < -80 || r.top > h + 80) continue;
-        c.style.setProperty('--sy', Math.max(-1, Math.min(1, (h / 2 - (r.top + r.height / 2)) / h)).toFixed(3));
-      }
-    };
-    addEventListener('scroll', () => { if (!sy) { sy = true; requestAnimationFrame(drift); } }, { passive: true });
-    drift();
   }
 
   /* Imperio: two covers, one switch */
@@ -321,7 +310,7 @@
     $('dBadge').hidden = !c.dataset.badge;
     $('dSpec').replaceChildren(...[...c.querySelector('.spec').children].map((n) => n.cloneNode(true)));
     $('dPhoto').replaceChildren(c.querySelector('.card-photo').cloneNode(true));
-    $('dPhoto').querySelectorAll('img').forEach((img) => { img.loading = 'eager'; });
+    $('dPhoto').querySelectorAll('img').forEach((img) => { img.loading = 'eager'; img.sizes = '(max-width: 700px) 90vw, 560px'; });
 
     $('fColour').hidden = !colours.length;
     if (colours.length) optKeys($('kColour'), 'dcolour', colours, pick.colour);
@@ -390,7 +379,7 @@
   $('dNext').addEventListener('click', (e) => openDetail(e.currentTarget.dataset.id));
 
   /* The side panels lean towards the pointer */
-  EC.lean?.([...document.querySelectorAll('.wing')].map((el) => ({ el, sx: 3, sy: 1.5 })));
+  // Showroom controls stay still while the bed is interactive.
 
   /* ---------- 11:40 pm: the bedroom from the film, at night ----------
      Two stills graded from the film: the lamps on, and the room after they go out, in moonlight.

@@ -1,17 +1,17 @@
 /* Official Easy Comfort logo palette; shared by every page and 3D scene. */
 :root,:root[data-palette],:root[data-theme=morning]{
   color-scheme:light;
-  --bg:#fff;--bg-2:#edf8f6;--bg-3:#fff;--surface:#fff;--surface-2:#e1f3f0;
-  --fg:#153b3b;--fg-2:#416260;--fg-3:#577775;--line:rgba(20,93,89,.12);--line-2:rgba(20,93,89,.24);
-  --accent:#25aaa4;--accent-ink:#08736e;--cta:linear-gradient(180deg,#168a84,#08736e);--on-cta:#fff;
-  --cta-shadow:0 12px 26px -12px #168a8480;--glass:#ffffffcf;--glass-2:#fffffff0;--glass-line:#168a8420;
+  --bg:#f8f3ea;--bg-2:#efe7da;--bg-3:#fffaf2;--surface:#fffcf6;--surface-2:#eae0d1;
+  --fg:#124d49;--fg-2:#385b54;--fg-3:#596b60;--line:rgba(20,93,89,.12);--line-2:rgba(20,93,89,.24);
+  --accent:#e99532;--accent-ink:#a9530e;--cta:linear-gradient(180deg,#11756d,#075b55);--on-cta:#fff;
+  --cta-shadow:0 12px 26px -12px #168a8480;--glass:#fffaf2ed;--glass-2:#fffcf6f5;--glass-line:#168a8420;
   --pill:#168a8410;--pill-2:#168a8420;--glow-a:#30b4ab25;--glow-b:#ed7b2220;
-  --orange:#ec7825;--orange-2:#b94e0d;--room-n:#193f3e;--scene-n:#102f30;--room-m:#e0efea;--scene-m:#f4faf8;
+  --orange:#ee8d23;--orange-2:#a9530e;--room-n:#293f37;--scene-n:#152e29;--room-m:#e9dfcf;--scene-m:#f5eee2;
   --b1-bg:#08736e;--b1-fg:#fff;--b2-bg:#ffffff20;--b2-fg:#fff;--b2-line:#ffffff50;
   --card-shadow:0 12px 36px -24px #125a5940;--card-shadow-2:0 22px 50px -26px #125a5960;
-  --stage:linear-gradient(160deg,#f5fcfa,#d9eeea);--grain:.02;
+  --stage:linear-gradient(160deg,#fff9ee,#e6dac5);--grain:.02;
 }
-:root[data-theme=night]{color-scheme:dark;--bg:#102f30;--bg-2:#0a2425;--bg-3:#173d3e;--surface:#173d3e;--surface-2:#214b4b;--fg:#f3fbf9;--fg-2:#bddbd5;--fg-3:#9dbdb7;--line:#d6f4ee20;--line-2:#d6f4ee40;--accent:#39bcb4;--accent-ink:#71dfd5;--glass:#102f30d0;--glass-2:#102f30f0;--pill:#aee4db15;--pill-2:#aee4db25;--stage:linear-gradient(160deg,#204c4b,#102f30)}
+:root[data-theme=night]{color-scheme:dark;--bg:#102f30;--bg-2:#0a2425;--bg-3:#173d3e;--surface:#173d3e;--surface-2:#214b4b;--fg:#f3fbf9;--fg-2:#bddbd5;--fg-3:#9dbdb7;--line:#d6f4ee20;--line-2:#d6f4ee40;--accent:#efa34c;--accent-ink:#ffc17b;--glass:#102f30d0;--glass-2:#102f30f0;--pill:#aee4db15;--pill-2:#aee4db25;--stage:linear-gradient(160deg,#204c4b,#102f30)}
 .brand-logo{display:block;width:164px;height:60px;overflow:hidden;background:white;border-radius:5px;position:relative}
 .brand-logo img{position:absolute;width:200px;height:200px;max-width:none;left:-18px;top:-62px}
 .card-photo:has(img[src*="-room.webp"])::before,.card-photo:has(img[src*="-room.webp"])::after{display:none}
@@ -40,25 +40,51 @@
 .nav .brand{padding:0;align-self:center;display:flex;align-items:center}
 .nav .brand-logo{width:166px;height:48px;display:flex;align-items:center;justify-content:center;overflow:visible;background:transparent;border-radius:0}
 .nav .brand-logo img{position:static;display:block;width:100%;height:auto;max-height:48px;object-fit:contain;max-width:100%;margin:0}
-/* Editorial hero: quiet typography, spacious rhythm, one deliberate entrance. */
-.vhero-in{width:min(34rem,39vw)}
-.vhero-text .hero-eyebrow{font-size:.66rem;letter-spacing:.23em;font-weight:650;gap:14px}
-.vhero-text .hero-eyebrow::after{width:30px;height:2px}
-.vhero-text h1{font:500 clamp(2.5rem,4.2vw,4.6rem)/1.13 var(--sans);letter-spacing:-.055em;text-transform:none;margin-top:.4em}
+/* Reference hero: warm linen, teal type and an orange serif accent. */
+.vhero{height:auto;min-height:max(760px,100svh);display:grid;grid-template-columns:44fr 56fr;background:#f8f3ea}
+.vhero-video{object-position:38% 50%}
+.vhero-shade{background:linear-gradient(90deg,transparent 22%,rgba(248,243,234,.35) 43%,rgba(248,243,234,.96) 62%,#f8f3ea 100%),linear-gradient(0deg,#f8f3ea 0%,transparent 24%)}
+.vhero-in{position:relative;inset:auto;grid-column:2;width:auto;min-width:0;margin:0;padding:150px clamp(28px,5vw,100px) 140px clamp(20px,3vw,60px);align-self:center}
+.vhero-text .hero-eyebrow{font-size:.7rem;letter-spacing:.2em;font-weight:700;gap:14px;color:var(--fg)}
+.vhero-text .hero-eyebrow::after{width:32px;height:2px;background:var(--orange)}
+.vhero-text h1{font:700 clamp(2.7rem,5.4vw,6.8rem)/1.08 Georgia,'Times New Roman',serif;letter-spacing:-.045em;text-transform:none;margin:.45em 0 0;color:var(--fg)}
 .vhero-text .t-rest,.vhero-text .t-easy{display:block}
-.vhero-text .t-easy{position:relative;font-family:'Young Serif',Georgia,serif;font-weight:400;letter-spacing:-.045em;padding-bottom:.16em;margin-top:.06em}
-.vhero-text .t-easy,.vhero-text .t-easy .w>span{background-image:none;color:var(--accent-ink)}
-.vhero-text .t-easy::after{content:'';position:absolute;left:0;bottom:0;width:64px;height:2px;background:var(--orange);transform:scaleX(var(--line-reveal,1));transform-origin:left}
-.vhero-text .hero-lead{max-width:37ch;font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.8;margin-top:1.3em}
-.vhero-text .hero-ctas{gap:12px;margin-top:26px}
-.vhero-text .btn--two{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
-.vhero-text .hero-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-2);padding-top:22px;margin-top:30px;gap:16px}
+.vhero-text .t-easy{position:relative;padding-bottom:.3em;margin-top:.04em}
+.vhero-text .t-easy,.vhero-text .t-easy .w>span{background-image:none;color:#ee8d23}
+.vhero-text .t-easy::after{content:'';position:absolute;left:0;bottom:0;width:84px;height:2px;background:var(--orange);transform:scaleX(var(--line-reveal,1));transform-origin:left}
+.vhero-text .hero-lead{max-width:40ch;font-size:clamp(1rem,1.15vw,1.18rem);line-height:1.7;margin:1.5em 0 0;color:var(--fg-2)}
+.vhero-text .hero-lead strong{display:block;color:var(--fg);font-weight:650;margin-bottom:.45em}
+.vhero-text .hero-ctas{gap:12px;margin-top:34px;justify-content:flex-start}
+.vhero-text .hero-ctas .btn{font-size:1rem;min-height:52px;padding:0 24px}
+.vhero-text .btn--two{background:rgba(255,252,246,.75);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
+.vhero-text .hero-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;border-top:1px solid var(--line-2);padding-top:20px;margin-top:30px;gap:16px}
 .vhero-text .hero-facts li{padding:0;border:0;display:block}
 .vhero-text .hero-facts .ic{display:none}
-.vhero-text .hero-facts span{font-size:.68rem;line-height:1.5;font-weight:500}
-.vhero-text .hero-facts b{font-size:1.8rem;font-weight:500;letter-spacing:-.04em;margin-bottom:7px}
-@media(max-width:900px){.vhero-in{width:auto}.vhero-text h1{font-size:clamp(2.5rem,7.8vw,4.4rem)}.vhero-text .hero-lead{max-width:44ch}.vhero-text .hero-facts{margin-top:24px;padding-top:18px}}
-@media(max-width:600px){.nav .brand-logo{width:140px;height:42px}.nav .brand-logo img{max-height:42px}.vhero-text .hero-eyebrow{font-size:.6rem;letter-spacing:.18em}.vhero-text .hero-facts{gap:12px}.vhero-text .hero-facts b{font-size:1.6rem}}
+.vhero-text .hero-facts span{display:block;font-size:.75rem;line-height:1.5;font-weight:500;color:var(--fg-2)}
+.vhero-text .hero-facts b{font-size:1.7rem;font-weight:500;letter-spacing:-.04em;margin-bottom:8px;color:var(--fg)}
+.vhero-chapters{left:25%;right:25%;bottom:30px;gap:24px}
+.vhero-chapters li,.vhero-chapters li.is-on{color:var(--fg);font-size:.7rem;letter-spacing:.12em}
+.vhero-chapters li.is-on b{color:var(--accent-ink)}
+.vhero-pause{right:5vw;bottom:24px;background:var(--surface);color:var(--fg)}
+:root[data-theme=night] .vhero{background:#102f30}
+:root[data-theme=night] .vhero-shade{background:linear-gradient(90deg,transparent 15%,#102f3060 40%,#102f30f5 62%,#102f30 100%),linear-gradient(0deg,#102f30,transparent 24%)}
+:root[data-theme=night] .vhero-text .t-easy,:root[data-theme=night] .vhero-text .t-easy .w>span{color:#ffc17b}
+:root[data-theme=night] .vhero-text .btn--two{background:#173d3e}
+@media(min-width:901px) and (max-width:1180px){.vhero-in{padding-left:20px;padding-right:32px}.vhero-text h1{font-size:3rem}}
+@media(max-width:900px){
+  .vhero{display:flex;min-height:0;padding:90px 0 84px;background:var(--bg)}
+  .vhero-video{height:clamp(240px,55vw,460px);object-position:45% 50%;mask-image:linear-gradient(#000 88%,transparent)}
+  .vhero-shade{display:none}
+  .vhero-in{width:auto;margin:0;padding:20px clamp(22px,6vw,54px) 24px;align-self:stretch}
+  .vhero-text h1{font-size:clamp(2.35rem,6.7vw,4.3rem)}
+  .vhero-text .hero-lead{max-width:44ch}
+  .vhero-text .hero-facts{margin-top:26px;padding-top:20px;gap:12px}
+  .vhero-text .hero-facts b{font-size:1.45rem}
+  .vhero-chapters{left:6vw;right:calc(6vw + 54px);bottom:24px;gap:12px}
+  .vhero-chapters li{font-size:.6rem;letter-spacing:.08em}
+  .vhero-pause{right:6vw;bottom:20px}
+}
+@media(max-width:600px){.nav .brand-logo{width:140px;height:42px}.nav .brand-logo img{max-height:42px}.vhero-text .hero-eyebrow{font-size:.6rem;letter-spacing:.16em}.vhero-text .hero-ctas .btn{padding:0 18px;font-size:.9rem}.vhero-text .hero-facts span{display:block;font-size:.68rem}}
 @media(prefers-reduced-motion:reduce){.vhero-text .t-easy::after{transform:none}}
 /* Quiet, consistently branded tiles. Keep the native link, remove the visual View badge. */
 .grid,:root:not([data-theme=morning]) .grid{--tile:#08736e;--tile-ink:#fff}
@@ -133,3 +159,16 @@ img.img-fading{transition:opacity .4s ease!important}
 #unveil,#ppInside{background:linear-gradient(135deg,#098780,#086660);color:#fff;border:1px solid #57dcd0;box-shadow:0 0 0 3px #2ab9ac20,0 0 22px #25bbae65,0 8px 24px #08736e40;transition:box-shadow .3s ease,background .3s ease,transform .3s ease}
 #unveil:hover,#ppInside:hover,#unveil:focus-visible,#ppInside:focus-visible{box-shadow:0 0 0 4px #2ab9ac30,0 0 34px #25bbae99,0 10px 28px #08736e55;outline:2px solid #9df6e9;outline-offset:4px}
 #unveil[aria-pressed=true],#ppInside[aria-pressed=true]{border-color:#ffb174;box-shadow:0 0 0 3px #ef7c2820,0 0 26px #ef7c2860,0 8px 24px #08736e40}
+
+/* Keep the showroom controls near the frame edges, leaving the bed clear. */
+@media(min-width:861px){
+  .story--show .wing--l{left:clamp(16px,2vw,32px)}
+  .story--show .wing--r{right:clamp(16px,2vw,32px)}
+  .story--show .showroom-head{padding:0 24px}
+}
+
+/* Opaque surfaces avoid blurring the video and WebGL scene on every frame. */
+.nav,.story--show .glass{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none}
+.vhero .btn,.vhero-pause{-webkit-backdrop-filter:none;backdrop-filter:none}
+html{scroll-behavior:auto}
+@media(prefers-reduced-motion:no-preference){html:focus-within{scroll-behavior:smooth}}

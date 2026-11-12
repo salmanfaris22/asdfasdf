@@ -111,9 +111,6 @@
 }
 :root{--room-m:#efe2d1; --scene-m:#ece4d8}
 :root[data-theme=morning]{--room-n:#2a2724; --scene-n:#1c1a18}
-/* Morning is plain white, in every palette: page, sections and cards on #fff (the cards stand out by their shadow and hairline).
-   The doubled attribute out-ranks the palette blocks above. */
-:root[data-theme=morning][data-theme=morning]{--bg:#ffffff;--bg-2:#ffffff;--bg-3:#ffffff;--surface:#ffffff;--glow-a:rgba(255,255,255,0);--glow-b:rgba(255,255,255,0);--grain:0}
 :root[data-palette=midnight]{--room-n:#1d2547; --scene-n:#1b2343; --room-m:#ece6dc; --scene-m:#ebe5db}
 :root[data-palette=sage]{--room-n:#1f2823; --scene-n:#18201b; --room-m:#ece9df; --scene-m:#e9e6dc}
 :root[data-palette=ocean]{--room-n:#17262d; --scene-n:#13222a; --room-m:#edf1f0; --scene-m:#e8eeee}

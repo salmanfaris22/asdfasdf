@@ -50,6 +50,7 @@
   /* the chapters follow the film */
   let raf = 0;
   function tick() {
+    if (raf) cancelAnimationFrame(raf);
     raf = 0;
     const t = video.currentTime;
     for (const c of chapters) {

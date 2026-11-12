@@ -29,7 +29,7 @@ function realAssets(small) {
     t.wrapS = t.wrapT = RepeatWrapping; t.anisotropy = maxAniso; if (srgb) t.colorSpace = SRGBColorSpace; res(t);
   }, undefined, () => res(null)));
   const set = (n, big, col = true) => {   // col false: relief and roughness only, the material keeps its own colour
-    const s = big && small ? '-sm' : '';
+    const s = big ? '-sm' : ''; // 1024px textures suit the capped canvas resolution on every device.
     return Promise.all([col ? T(`tex/${n}-col${s}.webp`, true) : null, T(`tex/${n}-nor${s}.webp`), T(`tex/${n}-rough.webp`)])
       .then(([map, normalMap, roughnessMap]) => (normalMap && (map || !col) ? { map, normalMap, roughnessMap } : null));
   };
@@ -684,12 +684,13 @@ function blurCopy(src, radius, down) {
 async function mount(canvas, init) {
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const small = Math.min(innerWidth, innerHeight) < 600;
+  const ambient = !calm && init.ambient === true; // Optional ambience; normal viewing renders only when changed.
 
   let renderer;
   try {
     renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   } catch (e) { init.onFail?.(e); return null; }
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));   // sharp enough with antialiasing, and far lighter to fill than 2x
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, small ? 1 : 1.25));   // sharp enough with antialiasing, and far lighter to fill than 2x
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1;
   renderer.shadowMap.enabled = true;
@@ -1307,7 +1308,7 @@ async function mount(canvas, init) {
 
   /* Lights. One light casts the shadows: the low sun through the glass in the morning, a warm spot over the bed at night */
   const key = new SpotLight('#fff1e0', 300, 90, .6, .85, 1.2);
-  key.castShadow = true; key.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048); key.shadow.radius = 6; key.shadow.blurSamples = 16;
+  key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 6; key.shadow.blurSamples = 16;
   key.shadow.bias = -.0004; key.shadow.normalBias = .025; key.shadow.camera.near = 4; key.shadow.camera.far = 80;
   scene.add(key, key.target);
   const KEY = { pos: [new Vector3(-6.5, 13.5, 11), new Vector3(XR + 22, 17, 9)], at: [new Vector3(0, 2, -.4), new Vector3(-.5, 1.6, -.8)] };
@@ -1712,8 +1713,11 @@ async function mount(canvas, init) {
   }
 
   /* ---------- Camera ---------- */
+  let fittedWidth = 0, fittedHeight = 0;
   function fit() {
     const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
+    if (w === fittedWidth && h === fittedHeight) return;
+    fittedWidth = w; fittedHeight = h;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
     const t = Math.tan(camera.fov * PI / 360);
@@ -1731,7 +1735,7 @@ async function mount(canvas, init) {
   const BUILD = { desk: { tx: 0, shift: 0, az: -.6, pol: 1.15, zoom: .84, dy: .15 }, phone: { tx: 0, shift: 0, az: -.55, pol: 1.17, zoom: .82, dy: .35 } };
   const V = {};
   function placeCamera() {
-    const sway = calm || S.touched ? 0 : Math.sin(S.time * .35) * .07;
+    const sway = !ambient || S.touched ? 0 : Math.sin(S.time * .35) * .07;
     const fr = (!S.phone && init.frame) || {};   // a page can set the bed off-centre, beside its own words (desktop only)
     const show = { az: S.az * (1 - S.lift * .55), pol: S.pol + S.lift * .15, d: S.dist * (fr.zoom ?? 1) * (1 + S.lift * (S.phone ? -.08 : -.05)), ty: mix(S.ty, Math.max(S.ty, tyOpen()), S.lift) + (fr.dy ?? 0), shift: 0, tx: fr.tx ?? 0 };
     const story = view(S.st, S.lift), made = view(S.phone ? BUILD.phone : BUILD.desk, 0);
@@ -1791,16 +1795,16 @@ async function mount(canvas, init) {
   canvas.addEventListener('pointerleave', () => { if (mat.dentT === .4) mat.dentT = 0; wake(); });
 
   /* ---------- Loop: runs only while something moves ---------- */
-  function wake() { S.idle = false; if (!S.raf && S.visible) { S.last = performance.now(); S.raf = requestAnimationFrame(loop); } }
-  const ambient = !calm;   // curtains, stars, cloud, dust and leaves
+  function wake() { S.idle = false; if (!S.raf && S.visible && !document.hidden) { S.last = performance.now(); S.raf = requestAnimationFrame(loop); } }
   let widthWasMoving = false;
 
   function loop() {
     S.raf = 0;
+    if (!S.visible || document.hidden) return;
     const now = performance.now();
     if (S.idle && now - S.lastDraw < 30) { S.raf = requestAnimationFrame(loop); return; }   // only the room moves: 30 frames a second is plenty
     const dt = clamp((now - S.last) / 1000, 0, .05); S.last = now; S.time += dt;
-    let busy = !calm && !S.touched;   // the gentle sway keeps running until you take over
+    let busy = ambient && !S.touched;   // the gentle sway keeps running until you take over
     if (ambient) roomTick(S.time);
 
     if (S.intro < 1 && S.released) { S.intro = Math.min(1, S.intro + dt / 2.6); S.scrollIn = easeOut(S.intro); busy = true; }
@@ -1990,7 +1994,9 @@ async function mount(canvas, init) {
 
   addEventListener('resize', fit);
   if (window.ResizeObserver) new ResizeObserver(fit).observe(canvas);
-  new IntersectionObserver(([e]) => { S.visible = e.isIntersecting; if (S.visible) wake(); }).observe(canvas);
+  const stop = () => { if (S.raf) cancelAnimationFrame(S.raf); S.raf = 0; };
+  new IntersectionObserver(([e]) => { S.visible = e.isIntersecting; if (S.visible) wake(); else stop(); }).observe(canvas);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else wake(); });
 
   S.visible = true; placeCamera();
   // the real materials get a few seconds behind the loading screen; any still on their way go on when they land
@@ -2004,7 +2010,8 @@ async function mount(canvas, init) {
     hidden.forEach((o) => { o.visible = false; });
   }
   renderer.render(scene, camera);
-  S.visible = canvas.getBoundingClientRect().top < innerHeight;
+  const bounds = canvas.getBoundingClientRect();
+  S.visible = bounds.top < innerHeight && bounds.bottom > 0;
   init.onReady?.();
   wake();
 
